@@ -1,5 +1,5 @@
 // Generated from /home/anderson/ProgrammingProjects/Java Projects/C#VocabularyExtractor/src/com/company/Java/java/JavaLexer.g4 by ANTLR 4.7
-package org.bluebird.Java;
+package org.bluebird.LanguagesUtil.Java;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

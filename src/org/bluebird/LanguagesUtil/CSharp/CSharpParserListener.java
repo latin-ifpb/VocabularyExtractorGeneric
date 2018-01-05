@@ -1,5 +1,5 @@
 // Generated from /home/anderson/ProgrammingProjects/Java Projects/C#VocabularyExtractor/src/com/company/CSharp/CSharpParser.g4 by ANTLR 4.7
-package org.bluebird.CSharp;
+package org.bluebird.LanguagesUtil.CSharp;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
