@@ -17,6 +17,8 @@ public class CSharpParserBaseListener implements CSharpParserListener {
      * <p>The default implementation does nothing.</p>
      */
     public void enterCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
+
+
     }
 
     /**
@@ -33,6 +35,8 @@ public class CSharpParserBaseListener implements CSharpParserListener {
      * <p>The default implementation does nothing.</p>
      */
     public void enterNamespace_or_type_name(CSharpParser.Namespace_or_type_nameContext ctx) {
+
+
     }
 
     /**
