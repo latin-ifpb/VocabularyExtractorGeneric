@@ -24,25 +24,34 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     @Override
     public void enterType_declaration(CSharpParser.Type_declarationContext ctx) {
-        System.out.print("\t" + this.tokens.getText(ctx.all_member_modifiers().getSourceInterval()) + " ");
+        try {
+            System.out.print("\t" + this.tokens.getText(ctx.all_member_modifiers().getSourceInterval()) + " ");
+        } catch (NullPointerException e) { //Se der erro nao tem modificador na classe
+            System.out.print("\t");
+        }
 
     }
 
     @Override
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
-        System.out.println(ctx.CLASS()+ " " + this.tokens.getText(ctx.identifier()));
+        try {
+            String args = this.tokens.getText(ctx.type_parameter_list().type_parameter(0));
+            System.out.println(ctx.CLASS()+ " " + this.tokens.getText(ctx.identifier()) + " <" + args + ">");
+        } catch (NullPointerException e) {  //Se der erro a classe nao tem parametro
+            System.out.println(ctx.CLASS()+ " " + this.tokens.getText(ctx.identifier()));
+        }
     }
 
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String name = this.tokens.getText(ctx.method_member_name().identifier(0));
-        System.out.print("\t\t" + name);
-        //codigo nao extrai se o metodo nao tiver parametros
-    }
-
-    @Override
-    public void enterFormal_parameter_list(CSharpParser.Formal_parameter_listContext ctx) {
-        System.out.println("(" + this.tokens.getText(ctx) + ")");
+        String args;
+        try {
+            args = this.tokens.getText(ctx.formal_parameter_list());
+        } catch (NullPointerException e) {  //Se der erro nao tem parametro
+            args = "";
+        }
+        System.out.println("\t\t" + name + "(" + args + ")");
     }
 
     @Override
@@ -55,7 +64,13 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String name =  this.tokens.getText(ctx.identifier());
-        System.out.print("\t\t"+ name);
+        String args;
+        try {
+            args = this.tokens.getText(ctx.formal_parameter_list());
+        } catch (NullPointerException e) {  //Se der erro nao tem parametro
+            args = "";
+        }
+        System.out.println("\t\t"+ name + "(" + args + ")");
     }
 
 }

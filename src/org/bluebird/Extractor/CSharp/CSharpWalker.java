@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.bluebird.Extractor.LanguageWalker;
 import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-public class CSharpWalker {
+public class CSharpWalker implements LanguageWalker {
 
     private static String readFile(File file, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(file.toPath());
