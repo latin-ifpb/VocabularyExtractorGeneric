@@ -12,12 +12,12 @@ public class FileBrowser {
         return new String(encoded, encoding);
     }
 
-    public static void browseDirectory(LanguageWalker walker, File directory, String formato) throws IOException {
+    public static void browseDirectory(LanguageWalker walker, File directory) throws IOException {
         for (File child : directory.listFiles()) {
             if (child.isDirectory()) {
-                browseDirectory(walker, child, formato);
+                browseDirectory(walker, child);
             } else {
-                if (child.getName().endsWith("." + formato)) {
+                if (child.getName().endsWith("." + walker.languageFormat())) {
                     walker.walkFileTree(child);
                 }
             }

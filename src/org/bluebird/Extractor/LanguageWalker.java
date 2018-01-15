@@ -6,4 +6,6 @@ import java.io.IOException;
 public interface LanguageWalker {
 
     void walkFileTree(File file) throws IOException;
+
+    String languageFormat();
 }

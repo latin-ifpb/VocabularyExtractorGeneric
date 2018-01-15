@@ -30,4 +30,9 @@ public class CSharpWalker implements LanguageWalker {
         CSharpListener extractor = new CSharpListener(parser);
         walker.walk(extractor, tree);
     }
+
+    @Override
+    public String languageFormat() {
+        return "cs";
+    }
 }
