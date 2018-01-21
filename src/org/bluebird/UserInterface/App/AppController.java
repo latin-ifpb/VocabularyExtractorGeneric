@@ -80,10 +80,12 @@ public class AppController implements Initializable {
     @FXML
     public void vxlLocation() {
         this.vxlFilePath = this.appModel.chooseDir(this.vxlBrowser);
-        if (projectName.getText().isEmpty()) {
-            this.vxlDirPath.setText(this.vxlFilePath + "/Default.vxl");
-        } else {
-            this.vxlDirPath.setText(this.vxlFilePath + "/" + projectName.getText() + ".vxl");
+        if(!(this.vxlFilePath.equals(""))) {
+            if (projectName.getText().isEmpty()) {
+                this.vxlDirPath.setText(this.vxlFilePath + "/Default.vxl");
+            } else {
+                this.vxlDirPath.setText(this.vxlFilePath + "/" + projectName.getText() + ".vxl");
+            }
         }
     }
 
@@ -93,6 +95,7 @@ public class AppController implements Initializable {
         String revisionName;
         String languageOption;
 
+        this.languageStatus.setText("");
         this.nameStatus.setText("");
         this.revisionStatus.setText("");
         this.dirPathStatus.setText("");

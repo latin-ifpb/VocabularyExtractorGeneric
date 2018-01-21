@@ -7,7 +7,6 @@ import org.bluebird.UserInterface.Utils.PrimaryWindowsInit;
 public class Runner extends Application {
 
     public void start(Stage primaryStage) {
-
         PrimaryWindowsInit.appWindow();
     }
 

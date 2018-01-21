@@ -5,7 +5,6 @@ import javafx.scene.control.ComboBox;
 import javafx.stage.DirectoryChooser;
 import org.bluebird.Extractor.CSharp.CSharpWalker;
 import org.bluebird.Extractor.FileBrowser;
-import org.bluebird.Extractor.Java.JavaWalker;
 import org.bluebird.Extractor.LanguageWalker;
 
 import java.io.File;
@@ -18,7 +17,7 @@ class AppModel {
         chooser.setTitle("Choose Directory");
         File file = chooser.showDialog(dirBrowser.getScene().getWindow());
 
-        return file.getAbsolutePath();
+        return (file != null) ? file.getAbsolutePath() : "";
     }
 
     boolean languageOptionIsEmpty(ComboBox languages) {
@@ -45,8 +44,8 @@ class AppModel {
         switch (language) {
             case "CSharp" :
                 return new CSharpWalker();
-            case "Java" :
-                return new JavaWalker();
+            /*case "Java" :
+                return new JavaWalker();*/
             default:
                 return null;
         }

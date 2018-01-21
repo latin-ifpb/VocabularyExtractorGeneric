@@ -1,0 +1,55 @@
+.mainWindow{
+    -fx-background-color: #f4f4f4;
+}
+
+.mainMenu{
+    -fx-background-color: lightslategrey;
+    -fx-border-width: 0 0 7 0;
+    -fx-border-color: coral;
+}
+
+.menu:hover{
+    -fx-background-color: none;
+    -fx-text-fill: white;
+}
+
+.menu:showing {
+    -fx-background-color: none;
+    -fx-text-fill: white;
+}
+.menu-item:showing{
+    -fx-background-color: none;
+    -fx-text-fill: white;
+}
+
+.menu-item:hover{
+    -fx-background-color: none;
+    -fx-text-fill: white;
+}
+
+.menu-item:focused{
+    -fx-background-color: none;
+    -fx-text-fill: white;
+}
+
+.context-menu {
+    -fx-skin: "com.sun.javafx.scene.control.skin.ContextMenuSkin";
+    -fx-background-color: lightslategrey;
+    -fx-background-insets: 0, 1, 2;
+    -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em;
+}
+
+.button{
+    -fx-background-color: lightslategrey;
+}
+
+.button:hover{
+    -fx-text-fill: white;
+}
+
+.directoryLabel{
+    -fx-border-width: 1 1 1 1;
+    -fx-border-color: lightgrey;
+    -fx-background-color: white;
+    -fx-border-radius: 2px;
+}
