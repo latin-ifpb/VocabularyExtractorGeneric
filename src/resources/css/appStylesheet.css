@@ -2,6 +2,8 @@
     -fx-background-color: #f4f4f4;
 }
 
+/*3D4956 - cor */
+
 .mainMenu{
     -fx-background-color: lightslategrey;
     -fx-border-width: 0 0 7 0;
@@ -17,19 +19,17 @@
     -fx-background-color: none;
     -fx-text-fill: white;
 }
+
 .menu-item:showing{
     -fx-background-color: none;
-    -fx-text-fill: white;
 }
 
 .menu-item:hover{
     -fx-background-color: none;
-    -fx-text-fill: white;
 }
 
 .menu-item:focused{
     -fx-background-color: none;
-    -fx-text-fill: white;
 }
 
 .context-menu {

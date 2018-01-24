@@ -11,14 +11,10 @@ import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
+
+import static org.bluebird.Extractor.FileBrowser.readFile;
 
 public class CSharpWalker implements LanguageWalker {
-
-    private static String readFile(File file, Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(file.toPath());
-        return new String(encoded, encoding);
-    }
 
     public void walkFileTree(File file) throws IOException {
         String code = readFile(file, Charset.forName("UTF-8"));

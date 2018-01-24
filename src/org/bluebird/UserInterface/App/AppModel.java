@@ -3,7 +3,6 @@ package org.bluebird.UserInterface.App;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.DirectoryChooser;
-import org.bluebird.Extractor.CSharp.CSharpWalker;
 import org.bluebird.Extractor.FileBrowser;
 import org.bluebird.Extractor.LanguageWalker;
 
@@ -41,14 +40,13 @@ class AppModel {
     }
 
     private LanguageWalker returnWalkerObject(String language) {
-        switch (language) {
-            case "CSharp" :
-                return new CSharpWalker();
-            /*case "Java" :
-                return new JavaWalker();*/
-            default:
-                return null;
+        try {
+            Class walker = Class.forName("org.bluebird.Extractor."+ language + "." + language + "Walker");
+            return (LanguageWalker) walker.newInstance();
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     void extractVocabulary(String language, String projectName, String revision, String path) {
