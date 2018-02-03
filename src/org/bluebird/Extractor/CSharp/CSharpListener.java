@@ -12,13 +12,13 @@ public class CSharpListener extends CSharpParserBaseListener {
     public CSharpListener(CSharpParser parser) {
         this.cSharpParser = parser;
         this.tokens = parser.getTokenStream();
-    }
+    }/*Construtor que passa o parser*/
 
     @Override
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         System.out.println(ctx.NAMESPACE() + " " + this.tokens.getText(ctx.qualified_identifier().getSourceInterval()) +" ");
 
-    }
+    }/* Extrai o namespace*/
 
     @Override
     public void enterType_declaration(CSharpParser.Type_declarationContext ctx) {
@@ -28,7 +28,7 @@ public class CSharpListener extends CSharpParserBaseListener {
             System.out.print("\t");
         }
 
-    }
+    }/* Extrai o modificador da classe*/
 
     @Override
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
@@ -38,7 +38,7 @@ public class CSharpListener extends CSharpParserBaseListener {
         } catch (NullPointerException e) {  //Se der erro a classe nao tem parametro
             System.out.println(ctx.CLASS()+ " " + this.tokens.getText(ctx.identifier()));
         }
-    }
+    }/* Extrai a clase */
 
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
@@ -51,18 +51,18 @@ public class CSharpListener extends CSharpParserBaseListener {
             args = "";
         }
         System.out.println(name + "(" + args + ")");
-    }
+    } /* Extrai o metodo e os parametros*/
 
     @Override
     public void enterField_declaration(CSharpParser.Field_declarationContext ctx) {
         for ( CSharpParser.Variable_declaratorContext atributo : ctx.variable_declarators().variable_declarator()) {
             System.out.println(this.tokens.getText(atributo.identifier().getSourceInterval()));
         }
-    }
+    }/* Extrai os atributos */
 
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
-        String name =  this.tokens.getText(ctx.identifier());
+        String name = this.tokens.getText(ctx.identifier());
         String args;
         try {
             args = this.tokens.getText(ctx.formal_parameter_list());
@@ -70,7 +70,8 @@ public class CSharpListener extends CSharpParserBaseListener {
             args = "";
         }
         System.out.println(name + "(" + args + ")");
-    }
+    } /* Extrai o construtor*/
+
     @Override
     public void enterAll_member_modifiers(CSharpParser.All_member_modifiersContext ctx) {
         String soma = "";
@@ -78,22 +79,24 @@ public class CSharpListener extends CSharpParserBaseListener {
             soma += this.tokens.getText(ctx.all_member_modifier(i)) + " ";
         }
         System.out.print("\t\t"+soma);
-    }
+    }/* Extrai os modificadores das classes, metodos e atributos*/
+
     @Override
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         System.out.println(this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0)));
-    }
+    }/* Extrai os getters e setters*/
 
     @Override
     public void enterTyped_member_declaration(CSharpParser.Typed_member_declarationContext ctx) {
         System.out.print(this.tokens.getText(ctx.type())+" ");
 
-    }
+    }/* Extrai os tipos das classes, dos metodos, e dos atributos*/
+
     @Override
     public void enterLocal_variable_declaration(CSharpParser.Local_variable_declarationContext ctx) {
         String tipo = this.tokens.getText(ctx.local_variable_type().type());
         String nome = this.tokens.getText(ctx.local_variable_declarator(0).identifier());
         System.out.print("\t\t\t"+tipo+" "+nome+"\n");
-    }
+    } /* Extrai a variavel local da classe*/
 
 }
