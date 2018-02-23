@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static org.bluebird.Extractor.FileBrowser.readFile;
+import static org.bluebird.FileUtils.FileBrowser.readFile;
 
 public class CSharpWalker implements LanguageWalker {
 

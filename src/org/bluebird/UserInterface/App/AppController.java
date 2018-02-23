@@ -31,13 +31,13 @@ public class AppController implements Initializable {
     private Button dirBrowser;
 
     @FXML
-    private Button vxlBrowser;
+    private Button xmlBrowser;
 
     @FXML
     private Label filePath;
 
     @FXML
-    private Label vxlDirPath;
+    private Label xmlDirPath;
 
     @FXML
     private Label nameStatus;
@@ -49,13 +49,13 @@ public class AppController implements Initializable {
     private Label dirPathStatus;
 
     @FXML
-    private Label vxlPathStatus;
+    private Label xmlPathStatus;
 
     @FXML
     private Label languageStatus;
 
     private String dirPath = "";
-    private String vxlFilePath = "";
+    private String xmlFilePath = "";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -65,7 +65,7 @@ public class AppController implements Initializable {
     @FXML
     public void openGitHub() {
         try {
-            this.runner.getHostServices().showDocument("https://github.com/witoriamanuely/Projeto_POO");
+            this.runner.getHostServices().showDocument("https://github.com/witoriamanuely/VocabularyExtractor_CSharp");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,13 +78,13 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void vxlLocation() {
-        this.vxlFilePath = this.appModel.chooseDir(this.vxlBrowser);
-        if(!(this.vxlFilePath.equals(""))) {
+    public void xmlLocation() {
+        this.xmlFilePath = this.appModel.chooseDir(this.xmlBrowser);
+        if(!(this.xmlFilePath.equals(""))) {
             if (projectName.getText().isEmpty()) {
-                this.vxlDirPath.setText(this.vxlFilePath + "/Default.vxl");
+                this.xmlDirPath.setText(this.xmlFilePath + "/Default.xml");
             } else {
-                this.vxlDirPath.setText(this.vxlFilePath + "/" + projectName.getText() + ".vxl");
+                this.xmlDirPath.setText(this.xmlFilePath + "/" + projectName.getText() + ".xml");
             }
         }
     }
@@ -99,7 +99,7 @@ public class AppController implements Initializable {
         this.nameStatus.setText("");
         this.revisionStatus.setText("");
         this.dirPathStatus.setText("");
-        this.vxlPathStatus.setText("");
+        this.xmlPathStatus.setText("");
 
         if (appModel.languageOptionIsEmpty(this.languageComboBox)) {
             this.languageStatus.setText("Choose a language");
@@ -115,10 +115,10 @@ public class AppController implements Initializable {
                     revisionName = this.projectRevision.getText();
                     if (appModel.projectPathIsEmpty(this.dirPath)) {
                         this.dirPathStatus.setText("Path empty");
-                    } else if (appModel.vxlPathIsEmpty(this.vxlFilePath)) {
-                        this.vxlPathStatus.setText("Path empty");
+                    } else if (appModel.vxlPathIsEmpty(this.xmlFilePath)) {
+                        this.xmlPathStatus.setText("Path empty");
                     } else {
-                        appModel.extractVocabulary(languageOption, projectName, revisionName, dirPath);
+                        appModel.extractVocabulary(languageOption, projectName, revisionName, this.dirPath, this.xmlFilePath);
                         SecondaryWindowsInit.successWindow();
                     }
                 }

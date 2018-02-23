@@ -1,4 +1,6 @@
-package org.bluebird.Extractor;
+package org.bluebird.FileUtils;
+
+import org.bluebird.Extractor.LanguageWalker;
 
 import java.io.File;
 import java.io.IOException;
