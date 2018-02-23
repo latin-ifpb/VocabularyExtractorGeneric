@@ -1,19 +1,62 @@
 package org.bluebird.Extractor.CSharp;
 
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.misc.MultiMap;
+import org.antlr.v4.runtime.misc.OrderedHashSet;
 import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParserBaseListener;
+
+import java.util.Set;
+
+class Graph {
+    public Set<String> nodes = new OrderedHashSet<String>();
+    MultiMap<String, String> edges = new MultiMap<String, String>();
+    public void edge(String source, String target){
+        edges.map(source, target);
+    }
+    public String toDOT(){
+        StringBuilder buf = new StringBuilder();
+        buf.append("digraph G{\n");
+        buf.append("  ranksep=.25;\n");
+        buf.append("  edge [arrowsize=.5]\n");
+        buf.append("   node [shape=circle, fontname=\"ArialNarrow\",\n");
+        buf.append("       fontsize=12, fixedsize=true, height=.45];\n");
+        for (String node:nodes) { //printa proximo nó
+            buf.append(node);
+            buf.append("; ");
+        }
+        buf.append("\n");
+        for (String src : edges.keySet()){
+            for (String trg : edges.get(src)){
+                buf.append(" ");
+                buf.append(src);
+                buf.append("  ->  ");
+                buf.append(trg);
+                buf.append(":\n");
+            }
+        }
+        buf.append("}\n");
+        return buf.toString();
+    }
+}
 
 public class CSharpListener extends CSharpParserBaseListener {
 
     private TokenStream tokens;
     private String modifiers = "default";
     private StringBuilder args = new StringBuilder();
+    private String funcaoAtual = null;
+    private Graph graph = new Graph();
 
     CSharpListener(CSharpParser parser) {
+
         this.tokens = parser.getTokenStream();
     }/*Construtor que passa o parser*/
+
+    Graph getGraph(){
+        return this.graph;
+    }
 
     private void returnArgsType(CSharpParser.Fixed_parametersContext ctx) {
         String temp;
@@ -61,7 +104,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
-
+        this.funcaoAtual = methodIdentifier;
         try {
             returnArgsType(ctx.formal_parameter_list().fixed_parameters());
         } catch (NullPointerException e) {
@@ -90,7 +133,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
-
+        this.funcaoAtual = constructorIdentifier;
         try {
             returnArgsType(ctx.formal_parameter_list().fixed_parameters());
         } catch (NullPointerException e) {
@@ -126,7 +169,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         String propertyIdentifier = this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0));
-
+        this.funcaoAtual = propertyIdentifier;
         FileCreator.appendToFile("\t\t\t<property name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
     }/* Extrai os getters e setters*/
 
@@ -154,4 +197,22 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         FileCreator.appendToFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType + "\"></lvar>\n");
     } /* Extrai a variavel local da classe*/
+
+    public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx){
+        String classe = "";
+        String metodo = "";
+        for(int i = 0; i < ctx.method_invocation().size(); i++){
+
+            try {
+                classe = this.tokens.getText(ctx.pe.getSourceInterval());
+                metodo = this.tokens.getText(ctx.member_access(i));
+            }catch (NullPointerException k){
+                System.out.print("erro");
+            }
+
+            graph.edge(this.funcaoAtual, (classe+metodo));
+        }
+    }
+
 }
+
