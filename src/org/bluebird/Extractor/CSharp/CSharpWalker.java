@@ -25,7 +25,6 @@ public class CSharpWalker implements LanguageWalker {
         ParseTreeWalker walker = new ParseTreeWalker();
         CSharpListener extractor = new CSharpListener(parser, tokens);
         walker.walk(extractor, tree);
-        System.out.println(extractor.getGraph().toDOT());
     }
 
     @Override
