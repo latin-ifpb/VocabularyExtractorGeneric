@@ -8,9 +8,9 @@
       <Label layoutX="40.0" layoutY="155.0" text="Project Name:" />
       <Label layoutX="40.0" layoutY="245.0" text="Project Revision:" />
       <Label layoutX="40.0" layoutY="335.0" text="Project Path:" />
-      <Label layoutX="40.0" layoutY="425.0" text="Xml Path:" />
+      <Label layoutX="40.0" layoutY="425.0" text="Vxl Path:" />
       <Label layoutX="480.0" layoutY="525.0" text="Alpha Version" />
-      <Button layoutX="150.0" layoutY="420.0" mnemonicParsing="false" onAction="#xmlLocation" text="Browse" textAlignment="CENTER" fx:id="xmlBrowser" />
+      <Button layoutX="150.0" layoutY="420.0" mnemonicParsing="false" onAction="#vxlLocation" text="Browse" textAlignment="CENTER" fx:id="vxlBrowser" />
       <TextField fx:id="projectName" layoutX="40.0" layoutY="180.0" prefHeight="25.0" prefWidth="280.0" />
       <TextField fx:id="projectRevision" layoutX="40.0" layoutY="270.0" prefHeight="25.0" prefWidth="280.0" />
       <MenuBar layoutY="61.0" prefHeight="35.0" prefWidth="580.0" styleClass="mainMenu" AnchorPane.bottomAnchor="515.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -24,11 +24,11 @@
       </MenuBar>
       <Label fx:id="filePath" layoutX="40.0" layoutY="360.0" prefHeight="25.0" prefWidth="500.0" styleClass="directoryLabel" />
       <Button layoutX="227.5" layoutY="480.0" mnemonicParsing="false" onAction="#extract" prefHeight="25.0" prefWidth="125.0" text="Extract" textAlignment="CENTER" />
-      <Label layoutX="40.0" layoutY="450.0" prefHeight="25.0" prefWidth="500.0" styleClass="directoryLabel" fx:id="xmlDirPath" />
+      <Label layoutX="40.0" layoutY="450.0" prefHeight="25.0" prefWidth="500.0" styleClass="directoryLabel" fx:id="vxlDirPath" />
       <Label fx:id="nameStatus" layoutX="190.0" layoutY="155.0" prefHeight="15.0" prefWidth="200.0" />
       <Label fx:id="revisionStatus" layoutX="190.0" layoutY="245.0" prefHeight="15.0" prefWidth="200.0" />
       <Label fx:id="dirPathStatus" layoutX="250.0" layoutY="335.0" prefWidth="125.0" />
-      <Label layoutX="250.0" layoutY="425.0" prefWidth="125.0" fx:id="xmlPathStatus" />
+      <Label layoutX="250.0" layoutY="425.0" prefWidth="125.0" fx:id="vxlPathStatus" />
       <Label layoutX="40.0" layoutY="65.0" text="Language:" />
       <ComboBox fx:id="languageComboBox" layoutX="40.0" layoutY="90.0" prefHeight="25.0" prefWidth="120.0" promptText="Language" />
       <Label fx:id="languageStatus" layoutX="190.0" layoutY="65.0" prefHeight="15.0" prefWidth="200.0" />

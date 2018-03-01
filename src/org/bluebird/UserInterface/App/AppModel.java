@@ -3,6 +3,7 @@ package org.bluebird.UserInterface.App;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.DirectoryChooser;
+import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.LanguageWalker;
 import org.bluebird.FileUtils.FileBrowser;
 import org.bluebird.FileUtils.FileCreator;
@@ -49,20 +50,24 @@ class AppModel {
         }
     }
 
-    void extractVocabulary(String language, String projectName, String revision, String path, String xmlPath) {
+    void extractVocabulary(String language, String projectName, String revision, String path, String vxlPath) {
         LanguageWalker walker = returnWalkerObject(language);
 
         if (walker == null) {
             System.exit(1);
         }else {
-            FileCreator.appendToFile("<csharp-project name=\"" + projectName + "\" revision=\"" + revision + "\">" + "\n");
+            FileCreator.appendToXmlFile("<csharp-project name=\"" + projectName + "\" revision=\"" + revision + "\">" + "\n");
+
             try {
                 FileBrowser.browseDirectory(walker, new File(path));
             } catch (IOException error) {
                 System.out.println("Path not found");
             }
-            FileCreator.appendToFile("</csharp-project>");
-            FileCreator.saveXmlFile(projectName, xmlPath);
+
+            FileCreator.appendToXmlFile("</csharp-project>");
+            FileCreator.saveFile(projectName, vxlPath, FileCreator.getVxlFile(), "xml");
+            CallGraph.toDOT();
+            FileCreator.saveFile(projectName, vxlPath, FileCreator.getGraphDotFile(), "dot");
         }
     }
 }

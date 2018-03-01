@@ -23,7 +23,7 @@ public class CSharpWalker implements LanguageWalker {
         CSharpParser parser = new CSharpParser(tokens);
         ParserRuleContext tree = parser.compilation_unit();
         ParseTreeWalker walker = new ParseTreeWalker();
-        CSharpListener extractor = new CSharpListener(parser);
+        CSharpListener extractor = new CSharpListener(parser, tokens);
         walker.walk(extractor, tree);
     }
 

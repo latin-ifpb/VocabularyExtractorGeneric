@@ -31,13 +31,13 @@ public class AppController implements Initializable {
     private Button dirBrowser;
 
     @FXML
-    private Button xmlBrowser;
+    private Button vxlBrowser;
 
     @FXML
     private Label filePath;
 
     @FXML
-    private Label xmlDirPath;
+    private Label vxlDirPath;
 
     @FXML
     private Label nameStatus;
@@ -49,13 +49,13 @@ public class AppController implements Initializable {
     private Label dirPathStatus;
 
     @FXML
-    private Label xmlPathStatus;
+    private Label vxlPathStatus;
 
     @FXML
     private Label languageStatus;
 
     private String dirPath = "";
-    private String xmlFilePath = "";
+    private String vxlFilePath = "";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -78,13 +78,13 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void xmlLocation() {
-        this.xmlFilePath = this.appModel.chooseDir(this.xmlBrowser);
-        if(!(this.xmlFilePath.equals(""))) {
+    public void vxlLocation() {
+        this.vxlFilePath = this.appModel.chooseDir(this.vxlBrowser);
+        if(!(this.vxlFilePath.equals(""))) {
             if (projectName.getText().isEmpty()) {
-                this.xmlDirPath.setText(this.xmlFilePath + "/Default.xml");
+                this.vxlDirPath.setText(this.vxlFilePath + "/Default.xml");
             } else {
-                this.xmlDirPath.setText(this.xmlFilePath + "/" + projectName.getText() + ".xml");
+                this.vxlDirPath.setText(this.vxlFilePath + "/" + projectName.getText() + ".xml");
             }
         }
     }
@@ -99,7 +99,7 @@ public class AppController implements Initializable {
         this.nameStatus.setText("");
         this.revisionStatus.setText("");
         this.dirPathStatus.setText("");
-        this.xmlPathStatus.setText("");
+        this.vxlPathStatus.setText("");
 
         if (appModel.languageOptionIsEmpty(this.languageComboBox)) {
             this.languageStatus.setText("Choose a language");
@@ -115,10 +115,10 @@ public class AppController implements Initializable {
                     revisionName = this.projectRevision.getText();
                     if (appModel.projectPathIsEmpty(this.dirPath)) {
                         this.dirPathStatus.setText("Path empty");
-                    } else if (appModel.vxlPathIsEmpty(this.xmlFilePath)) {
-                        this.xmlPathStatus.setText("Path empty");
+                    } else if (appModel.vxlPathIsEmpty(this.vxlFilePath)) {
+                        this.vxlPathStatus.setText("Path empty");
                     } else {
-                        appModel.extractVocabulary(languageOption, projectName, revisionName, this.dirPath, this.xmlFilePath);
+                        appModel.extractVocabulary(languageOption, projectName, revisionName, this.dirPath, this.vxlFilePath);
                         SecondaryWindowsInit.successWindow();
                     }
                 }
