@@ -9,13 +9,18 @@ public class FileCreator {
 
     private static StringBuffer vxlFile = new StringBuffer();
     private static StringBuffer graphDotFile = new StringBuffer();
+    private static StringBuffer txtFile = new StringBuffer();
 
     public static StringBuffer getGraphDotFile() {
-        return graphDotFile;
+        return FileCreator.graphDotFile;
     }
 
     public static StringBuffer getVxlFile() {
-        return vxlFile;
+        return FileCreator.vxlFile;
+    }
+
+    public static StringBuffer getTxtFile() {
+        return FileCreator.txtFile;
     }
 
     public static void saveFile(String fileName, String path, StringBuffer type, String format) {
@@ -40,10 +45,14 @@ public class FileCreator {
     }
 
     public static void appendToXmlFile(String content) {
-        vxlFile.append(content);
+        FileCreator.vxlFile.append(content);
     }
 
     public static void appendToDotFile(String content) {
-        graphDotFile.append(content);
+        FileCreator.graphDotFile.append(content);
+    }
+
+    public static void appendToTxtFile(String content) {
+        FileCreator.txtFile.append(content);
     }
 }

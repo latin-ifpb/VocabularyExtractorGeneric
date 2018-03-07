@@ -66,6 +66,8 @@ class AppModel {
 
             FileCreator.appendToXmlFile("</csharp-project>");
             FileCreator.saveFile(projectName, vxlPath, FileCreator.getVxlFile(), "xml");
+            CallGraph.toTxt();
+            FileCreator.saveFile(projectName, vxlPath, FileCreator.getTxtFile(), "txt");
             CallGraph.toDOT();
             FileCreator.saveFile(projectName, vxlPath, FileCreator.getGraphDotFile(), "dot");
         }
