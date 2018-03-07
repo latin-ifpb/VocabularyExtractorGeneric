@@ -21,7 +21,8 @@ public class CommentsExtractor {
 
     public void getAllComments(ParserRuleContext ctx) {
         String comment;
-        for (Token cmt : commentsStream.getTokens(ctx.start.getTokenIndex(), ctx.stop.getTokenIndex())) {
+
+        for (Token cmt : commentsStream.getTokens(ctx.getStart().getTokenIndex(), ctx.getStop().getTokenIndex())) {
             if (cmt.getChannel() == CSharpLexer.COMMENTS_CHANNEL) {
                 comment = cmt.getText();
                 comment = comment.replace("<", "&lt;");
@@ -37,7 +38,7 @@ public class CommentsExtractor {
         for (int i = ctx.getStart().getLine(); i < ctx.getStop().getLine(); i++) {
             String cmt = this.comments.get(i);
             if (cmt != null) {
-                FileCreator.appendToXmlFile("\t\t\t<cmmt descr=\"" + this.comments.get(i) + "\"></cmmt>\n");
+                FileCreator.appendToXmlFile("\t\t\t<cmmt descr=\"" + cmt + "\"></cmmt>\n");
                 this.comments.remove(i);
             }
         }

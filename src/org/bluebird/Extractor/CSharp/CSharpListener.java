@@ -45,6 +45,11 @@ public class CSharpListener extends CSharpParserBaseListener {
     }
 
     @Override
+    public void exitCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
+        commentsExtractor.associateComments(ctx);
+    }
+
+    @Override
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
 
@@ -60,6 +65,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
+
         try {
             FileCreator.appendToXmlFile("\t\t<class name=\"" + classIdentifier + "\">\n");
         } catch (NullPointerException e) {  //Se der erro a classe nao tem parametro
@@ -92,6 +98,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
+        this.funcaoAtual = null;
         FileCreator.appendToXmlFile("\t\t\t</mth>\n");
     }
 
@@ -108,8 +115,6 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
-        this.funcaoAtual = constructorIdentifier;
-        callGraph.setNodes(constructorIdentifier);
 
         try {
             returnArgsType(ctx.formal_parameter_list().fixed_parameters());
@@ -154,33 +159,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     }/* Extrai os getters e setters*/
 
     @Override
-    public void enterGet_accessor_declaration(CSharpParser.Get_accessor_declarationContext ctx) {
-        callGraph.setEdge(this.funcaoAtual, "get");
-    }
-
-    @Override
-    public void enterSet_accessor_declaration(CSharpParser.Set_accessor_declarationContext ctx) {
-        callGraph.setEdge(this.funcaoAtual, "set");
-    }
-
-    @Override
-    public void enterAccessor_declarations(CSharpParser.Accessor_declarationsContext ctx) {
-        try {
-            callGraph.setEdge(this.funcaoAtual, this.tokens.getText(ctx.GET().getSourceInterval()));
-        } catch (NullPointerException e) {
-            System.out.print("");
-        }
-
-        try {
-            callGraph.setEdge(this.funcaoAtual, this.tokens.getText(ctx.SET().getSourceInterval()));
-        } catch (NullPointerException e) {
-            System.out.print("");
-        }
-    }
-
-    @Override
     public void exitProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
+        this.funcaoAtual = null;
         FileCreator.appendToXmlFile("\t\t\t</property>\n");
     }
 
@@ -206,29 +187,32 @@ public class CSharpListener extends CSharpParserBaseListener {
     } /* Extrai a variavel local da classe*/
 
     @Override
-    public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx) {
-        String metodo;
+    public void enterMember_access(CSharpParser.Member_accessContext ctx) {
+        String mth = this.tokens.getText(ctx.identifier().getSourceInterval());
 
-        for (int i = 0; i < ctx.method_invocation().size(); i++) {
-
-            try {
-                metodo = this.tokens.getText(ctx.member_access(i));
-            } catch (NullPointerException k) {
-                metodo = this.tokens.getText(ctx.primary_expression_start().getSourceInterval());
-            }
-
-            metodo = metodo.replace(".", "");
-            metodo = metodo.replace("?", "");
-            callGraph.setEdge(this.funcaoAtual, metodo);
+        mth = mth.replace(".", "");
+        mth = mth.replace("?", "");
+        if (this.funcaoAtual != null && !mth.equals("WriteLine") && !mth.equals("ReadLine") && !mth.equals("Write")) {
+            callGraph.setEdge(this.funcaoAtual, mth);
         }
     }
 
     @Override
-    public void enterObjectCreationExpression(CSharpParser.ObjectCreationExpressionContext ctx) {
-        try {
-            callGraph.setEdge(this.funcaoAtual, this.tokens.getText(ctx.type()));
-        } catch (NullPointerException e) {
-            System.out.println("");
+    public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx) {
+        String mth;
+
+        for (int i = 0; i < ctx.method_invocation().size(); i++) {
+
+            try {
+                this.tokens.getText(ctx.member_access(0));
+            } catch (NullPointerException k) {
+                mth = this.tokens.getText(ctx.primary_expression_start().getSourceInterval());
+                mth = mth.replace(".", "");
+                mth = mth.replace("?", "");
+                if (this.funcaoAtual != null) {
+                    callGraph.setEdge(this.funcaoAtual, mth);
+                }
+            }
         }
     }
 }
