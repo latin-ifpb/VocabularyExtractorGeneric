@@ -3,10 +3,7 @@ package org.bluebird.UserInterface.App;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.bluebird.Runner;
 import org.bluebird.UserInterface.Utils.SecondaryWindowsInit;
 
@@ -54,12 +51,20 @@ public class AppController implements Initializable {
     @FXML
     private Label languageStatus;
 
+    @FXML
+    private CheckBox callGraphBox;
+
     private String dirPath = "";
     private String vxlFilePath = "";
+    private static boolean callGraphCheck = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.languageComboBox.setItems(FXCollections.observableArrayList(languageOption.values()));
+    }
+
+    public static boolean getCallGraphCheck() {
+        return AppController.callGraphCheck;
     }
 
     @FXML
@@ -82,9 +87,9 @@ public class AppController implements Initializable {
         this.vxlFilePath = this.appModel.chooseDir(this.vxlBrowser);
         if(!(this.vxlFilePath.equals(""))) {
             if (projectName.getText().isEmpty()) {
-                this.vxlDirPath.setText(this.vxlFilePath + "/Default.xml");
+                this.vxlDirPath.setText(this.vxlFilePath + "/Default.vxl");
             } else {
-                this.vxlDirPath.setText(this.vxlFilePath + "/" + projectName.getText() + ".xml");
+                this.vxlDirPath.setText(this.vxlFilePath + "/" + projectName.getText() + ".vxl");
             }
         }
     }
@@ -118,6 +123,7 @@ public class AppController implements Initializable {
                     } else if (appModel.vxlPathIsEmpty(this.vxlFilePath)) {
                         this.vxlPathStatus.setText("Path empty");
                     } else {
+                        AppController.callGraphCheck = this.callGraphBox.isSelected();
                         appModel.extractVocabulary(languageOption, projectName, revisionName, this.dirPath, this.vxlFilePath);
                         SecondaryWindowsInit.successWindow();
                     }

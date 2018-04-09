@@ -35,7 +35,17 @@ public class CommentsExtractor {
     }
 
     public void associateComments(ParserRuleContext ctx) {
-        for (int i = ctx.getStart().getLine(); i < ctx.getStop().getLine(); i++) {
+        for (int i = ctx.getStart().getLine(); i <= ctx.getStop().getLine(); i++) {
+            String cmt = this.comments.get(i);
+            if (cmt != null) {
+                FileCreator.appendToXmlFile("\t\t\t<cmmt descr=\"" + cmt + "\"></cmmt>\n");
+                this.comments.remove(i);
+            }
+        }
+    }
+
+    public void associateComments(int index, ParserRuleContext ctx) {
+        for (int i = index; i < ctx.getStop().getLine(); i++) {
             String cmt = this.comments.get(i);
             if (cmt != null) {
                 FileCreator.appendToXmlFile("\t\t\t<cmmt descr=\"" + cmt + "\"></cmmt>\n");

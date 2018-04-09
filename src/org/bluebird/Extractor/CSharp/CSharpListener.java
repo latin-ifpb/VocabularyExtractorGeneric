@@ -7,6 +7,9 @@ import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParserBaseListener;
+import org.bluebird.UserInterface.App.AppController;
+
+import java.util.Stack;
 
 public class CSharpListener extends CSharpParserBaseListener {
 
@@ -15,6 +18,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     private StringBuilder args = new StringBuilder();
     private String funcaoAtual = null;
     private CallGraph callGraph;
+    private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
 
     //Construtor que passa o parser
@@ -22,6 +26,7 @@ public class CSharpListener extends CSharpParserBaseListener {
         this.tokens = parser.getTokenStream();
         this.callGraph = new CallGraph();
         this.commentsExtractor = new CommentsExtractor(tokenStream);
+        this.ruleIndex = new Stack<>();
     }
 
     private void returnArgsType(CSharpParser.Fixed_parametersContext ctx) {
@@ -55,12 +60,14 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
 
+        ruleIndex.push(ctx.getStart().getLine());
         FileCreator.appendToXmlFile("\t<nmspc name=\"" + namespaceIdentifier + "\">\n");
     }
 
     @Override
     public void exitNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
+        ruleIndex.pop();
         FileCreator.appendToXmlFile("\t</nmspc>\n");
     }
 
@@ -69,6 +76,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
 
+        ruleIndex.push(ctx.getStart().getLine());
         FileCreator.appendToXmlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
@@ -76,6 +84,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitClass_definition(CSharpParser.Class_definitionContext ctx) {
         commentsExtractor.associateComments(ctx);
+        ruleIndex.pop();
         FileCreator.appendToXmlFile("\t\t</class>\n");
     }
 
@@ -83,8 +92,11 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
-        this.funcaoAtual = methodIdentifier;
-        callGraph.setNodes(methodIdentifier);
+
+        if(AppController.getCallGraphCheck()) {
+            this.funcaoAtual = methodIdentifier;
+            callGraph.setNodes(methodIdentifier);
+        }
 
         try {
             returnArgsType(ctx.formal_parameter_list().fixed_parameters());
@@ -99,7 +111,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     @Override
     public void exitMethod_declaration(CSharpParser.Method_declarationContext ctx) {
-        commentsExtractor.associateComments(ctx);
+        commentsExtractor.associateComments(ruleIndex.peek(), ctx);
         this.funcaoAtual = null;
         FileCreator.appendToXmlFile("\t\t\t</mth>\n");
     }
@@ -112,8 +124,14 @@ public class CSharpListener extends CSharpParserBaseListener {
         for (CSharpParser.Variable_declaratorContext atributo : ctx.variable_declarators().variable_declarator()) {
             fieldIdentifier = this.tokens.getText(atributo.identifier().getSourceInterval());
         }
-        FileCreator.appendToXmlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" ></field>\n");
+        FileCreator.appendToXmlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
         this.modifiers = "default";
+    }
+
+    @Override
+    public void exitField_declaration(CSharpParser.Field_declarationContext ctx) {
+        commentsExtractor.associateComments(ctx);
+        FileCreator.appendToXmlFile("\t\t\t</field>\n");
     }
 
     //Extrai o construtor
@@ -156,8 +174,10 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         String propertyIdentifier = this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0));
-        this.funcaoAtual = propertyIdentifier;
-        callGraph.setNodes(propertyIdentifier);
+        if(AppController.getCallGraphCheck()) {
+            this.funcaoAtual = propertyIdentifier;
+            callGraph.setNodes(propertyIdentifier);
+        }
 
         FileCreator.appendToXmlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
@@ -249,16 +269,18 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx) {
         String mth;
 
-        for (int i = 0; i < ctx.method_invocation().size(); i++) {
+        if(AppController.getCallGraphCheck()) {
+            for (int i = 0; i < ctx.method_invocation().size(); i++) {
 
-            try {
-                this.tokens.getText(ctx.member_access(0));
-            } catch (NullPointerException k) {
-                mth = this.tokens.getText(ctx.primary_expression_start().getSourceInterval());
-                mth = mth.replace(".", "");
-                mth = mth.replace("?", "");
-                if (this.funcaoAtual != null) {
-                    callGraph.setEdge(this.funcaoAtual, mth);
+                try {
+                    this.tokens.getText(ctx.member_access(0));
+                } catch (NullPointerException k) {
+                    mth = this.tokens.getText(ctx.primary_expression_start().getSourceInterval());
+                    mth = mth.replace(".", "");
+                    mth = mth.replace("?", "");
+                    if (this.funcaoAtual != null) {
+                        callGraph.setEdge(this.funcaoAtual, mth);
+                    }
                 }
             }
         }
