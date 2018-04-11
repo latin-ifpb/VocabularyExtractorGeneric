@@ -48,6 +48,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
         commentsExtractor.getAllComments(ctx);
+        this.ruleIndex.push(1);
     }
 
     @Override
