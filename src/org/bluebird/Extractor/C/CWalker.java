@@ -1,0 +1,35 @@
+package org.bluebird.Extractor.C;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.bluebird.Extractor.LanguageWalker;
+import org.bluebird.LanguagesUtil.C.CLexer;
+import org.bluebird.LanguagesUtil.C.CParser;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import static org.bluebird.FileUtils.FileBrowser.readFile;
+
+public class CWalker implements LanguageWalker {
+
+    @Override
+    public void walkFileTree(File file) throws IOException {
+        String code = readFile(file, Charset.forName("UTF-8"));
+        CLexer lexer = new CLexer(new ANTLRInputStream(code));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CParser parser = new CParser(tokens);
+        ParserRuleContext tree = parser.compilationUnit();
+        ParseTreeWalker walker = new ParseTreeWalker();
+        CListener extractor = new CListener(parser, tokens);
+        walker.walk(extractor, tree);
+    }
+
+    @Override
+    public String languageFormat() {
+        return "c";
+    }
+}

@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.bluebird.FileUtils.FileCreator;
-import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,11 +18,11 @@ public class CommentsExtractor {
         this.commentsStream = commentsStream;
     }
 
-    public void getAllComments(ParserRuleContext ctx) {
+    public void getAllComments(ParserRuleContext ctx, int channel) {
         String comment;
 
         for (Token cmt : commentsStream.getTokens(ctx.getStart().getTokenIndex(), ctx.getStop().getTokenIndex())) {
-            if (cmt.getChannel() == CSharpLexer.COMMENTS_CHANNEL) {
+            if (cmt.getChannel() == channel) {
                 comment = cmt.getText();
                 comment = comment.replace("<", "&lt;");
                 comment = comment.replace(">", "&gt;");

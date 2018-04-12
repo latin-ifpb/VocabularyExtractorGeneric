@@ -1,7 +1,7 @@
 package org.bluebird.UserInterface.App;
 
 public enum languageOption {
-    CSharp;
+    CSharp, C, Java;
 
     languageOption() {}
 

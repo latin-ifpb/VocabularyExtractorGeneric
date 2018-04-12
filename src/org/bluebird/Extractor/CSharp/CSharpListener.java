@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.TokenStream;
 import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.FileUtils.FileCreator;
+import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParserBaseListener;
 import org.bluebird.UserInterface.App.AppController;
@@ -47,7 +48,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     @Override
     public void enterCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
-        commentsExtractor.getAllComments(ctx);
+        commentsExtractor.getAllComments(ctx, CSharpLexer.COMMENTS_CHANNEL);
         this.ruleIndex.push(1);
     }
 

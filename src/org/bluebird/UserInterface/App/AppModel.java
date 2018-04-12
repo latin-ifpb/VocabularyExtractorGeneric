@@ -56,7 +56,7 @@ class AppModel {
         if (walker == null) {
             System.exit(1);
         }else {
-            FileCreator.appendToXmlFile("<csharp-project name=\"" + projectName + "\" revision=\"" + revision + "\">" + "\n");
+            FileCreator.appendToXmlFile("<"+ language.toLowerCase() +"-project name=\"" + projectName + "\" revision=\"" + revision + "\">" + "\n");
 
             try {
                 FileBrowser.browseDirectory(walker, new File(path));
@@ -64,7 +64,7 @@ class AppModel {
                 System.out.println("Path not found");
             }
 
-            FileCreator.appendToXmlFile("</csharp-project>");
+            FileCreator.appendToXmlFile("</" + language.toLowerCase() + "-project>");
             FileCreator.saveFile(projectName, vxlPath, FileCreator.getVxlFile(), "xml");
             if(AppController.getCallGraphCheck()) {
                 CallGraph.toTxt();
