@@ -8,18 +8,31 @@ import java.util.List;
 import java.util.Set;
 
 public class CallGraph {
+
     private static Set<String> nodes = new OrderedHashSet<>();
     private static MultiMap<String, String> edges = new MultiMap<>();
     private static Set<String> notCalledMth = new OrderedHashSet<>();
 
+    /**
+     * Adiciona aresta ligando duas entidades no grafo
+     * @param source Vertice fonte
+     * @param target Vertice alvo
+     */
     public void setEdge(String source, String target) {
         edges.map(source, target);
     }
 
+    /**
+     * Adiciona entidade como vertice no grafo
+     * @param node Vertice
+     */
     public void setNodes(String node) {
         nodes.add(node);
     }
 
+    /**
+     * Procura metodos nao chamados
+     */
     private static void searchNotCalledMth() {
         Set<String> calledMth = new OrderedHashSet<>();
 
@@ -38,6 +51,9 @@ public class CallGraph {
         }
     }
 
+    /**
+     * Converte a string do grafo para o arquivo dot
+     */
     public static void toDOT() {
         FileCreator.appendToDotFile("digraph G{\n");
 
@@ -63,6 +79,9 @@ public class CallGraph {
         edges.clear();
     }
 
+    /**
+     * Converte a analise feita do grafo para o txt
+     */
     public static void toTxt() {
         CallGraph.searchNotCalledMth();
 

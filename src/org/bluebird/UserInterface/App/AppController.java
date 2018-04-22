@@ -58,15 +58,27 @@ public class AppController implements Initializable {
     private String vxlFilePath = "";
     private static boolean callGraphCheck = false;
 
+    /**
+     * Inicializa o controller depois que os elementos raiz foram processados
+     * @param location Localizacao do objeto raiz
+     * @param resources Recursos utilizados para localizar objeto raiz
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.languageComboBox.setItems(FXCollections.observableArrayList(languageOption.values()));
     }
 
+    /**
+     * Verifica se caixa de gerar call graph foi marcada
+     * @return Se caixa ta marcada ou nao
+     */
     public static boolean getCallGraphCheck() {
         return AppController.callGraphCheck;
     }
 
+    /**
+     * Abre o github do projeto
+     */
     @FXML
     public void openGitHub() {
         try {
@@ -76,12 +88,18 @@ public class AppController implements Initializable {
         }
     }
 
+    /**
+     * Escolhe path do projeto para extrair
+     */
     @FXML
     public void browseProjectDirectory() {
         this.dirPath = this.appModel.chooseDir(this.dirBrowser);
         this.filePath.setText(this.dirPath);
     }
 
+    /**
+     * Escolhe path para salvar vxl
+     */
     @FXML
     public void vxlLocation() {
         this.vxlFilePath = this.appModel.chooseDir(this.vxlBrowser);
@@ -94,6 +112,9 @@ public class AppController implements Initializable {
         }
     }
 
+    /**
+     * Verifica se tudo foi preenchido e comeca a extrair
+     */
     @FXML
     public void extract() {
         String projectName;

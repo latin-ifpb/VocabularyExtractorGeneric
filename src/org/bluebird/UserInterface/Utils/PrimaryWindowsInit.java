@@ -10,10 +10,18 @@ import java.io.IOException;
 
 public class PrimaryWindowsInit implements WindowsInit {
 
+    /**
+     * Cria uma janela primaria do javafx
+     * @param path Caminho do fxml
+     */
     private PrimaryWindowsInit(String path) {
         WindowsInitializer(path);
     }
 
+    /**
+     * Inicializa uma janela do javafx
+     * @param path Caminho do fxml
+     */
     @Override
     public void WindowsInitializer(String path) {
         try {
@@ -32,6 +40,9 @@ public class PrimaryWindowsInit implements WindowsInit {
         }
     }
 
+    /**
+     * Cria a janela do app
+     */
     public static void appWindow() {
         new PrimaryWindowsInit("/resources/fxml/app.fxml");
     }

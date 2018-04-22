@@ -9,10 +9,18 @@ import java.io.IOException;
 
 public class SecondaryWindowsInit implements WindowsInit {
 
+    /**
+     * Cria uma janela secundaria do javafx
+     * @param path Caminho do fxml
+     */
     private SecondaryWindowsInit(String path) {
         WindowsInitializer(path);
     }
 
+    /**
+     * Inicializa uma janela do javafx
+     * @param path Caminho do fxml
+     */
     @Override
     public void WindowsInitializer(String path) {
         try {
@@ -31,6 +39,9 @@ public class SecondaryWindowsInit implements WindowsInit {
         }
     }
 
+    /**
+     * Cria janela de success
+     */
     public static void successWindow() {
         new SecondaryWindowsInit("/resources/fxml/success.fxml");
     }

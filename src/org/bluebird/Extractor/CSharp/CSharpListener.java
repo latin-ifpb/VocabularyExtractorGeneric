@@ -22,7 +22,11 @@ public class CSharpListener extends CSharpParserBaseListener {
     private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
 
-    //Construtor que passa o parser
+    /**
+     * Construtor do Listener da Linguagem C#
+     * @param parser Parser do C#
+     * @param tokenStream Token Stream do Arquivo C#
+     */
     CSharpListener(CSharpParser parser, BufferedTokenStream tokenStream) {
         this.tokens = parser.getTokenStream();
         this.callGraph = new CallGraph();
@@ -30,6 +34,10 @@ public class CSharpListener extends CSharpParserBaseListener {
         this.ruleIndex = new Stack<>();
     }
 
+    /**
+     * Extrai os tipos dos argumentos dos metodos
+     * @param ctx Entidade da Parser Tree
+     */
     private void returnArgsType(CSharpParser.Fixed_parametersContext ctx) {
         String temp;
 
@@ -46,51 +54,76 @@ public class CSharpListener extends CSharpParserBaseListener {
         }
     }
 
+    /**
+     * Inicia a extração do arquivo C# e pega todos comentarios do arquivo
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
         commentsExtractor.getAllComments(ctx, CSharpLexer.COMMENTS_CHANNEL);
         this.ruleIndex.push(1);
     }
 
+    /**
+     * Termina a extração do arquivo C#
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
         commentsExtractor.associateComments(ctx);
     }
 
-    //Extrai o namespace
+    /**
+     * Extrai o namespace
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
 
         ruleIndex.push(ctx.getStart().getLine());
-        FileCreator.appendToXmlFile("\t<nmspc name=\"" + namespaceIdentifier + "\">\n");
+        FileCreator.appendToVxlFile("\t<nmspc name=\"" + namespaceIdentifier + "\">\n");
     }
 
+    /**
+     * Associa comentarios ao namespace
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
         ruleIndex.pop();
-        FileCreator.appendToXmlFile("\t</nmspc>\n");
+        FileCreator.appendToVxlFile("\t</nmspc>\n");
     }
 
-    //Extrai a classe
+    /**
+     * Extrai a classe
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
 
         ruleIndex.push(ctx.getStart().getLine());
-        FileCreator.appendToXmlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+        FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Associa comentarios a classe
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitClass_definition(CSharpParser.Class_definitionContext ctx) {
         commentsExtractor.associateComments(ctx);
         ruleIndex.pop();
-        FileCreator.appendToXmlFile("\t\t</class>\n");
+        FileCreator.appendToVxlFile("\t\t</class>\n");
     }
 
-    //Extrai o metodo e os parametros
+    /**
+     * Extrai o metodo
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
@@ -106,19 +139,26 @@ public class CSharpListener extends CSharpParserBaseListener {
             args.append("");
         }
 
-        FileCreator.appendToXmlFile("\t\t\t<mth name=\"" + methodIdentifier + "(" + this.args + ")" + "\" acess=\"" +
+        FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + "(" + this.args + ")" + "\" acess=\"" +
                 this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Associa comentarios aos metodos
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         commentsExtractor.associateComments(ruleIndex.peek(), ctx);
         this.funcaoAtual = null;
-        FileCreator.appendToXmlFile("\t\t\t</mth>\n");
+        FileCreator.appendToVxlFile("\t\t\t</mth>\n");
     }
 
-    //Extrai os atributos
+    /**
+     * Extrai o atributo
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterField_declaration(CSharpParser.Field_declarationContext ctx) {
         String fieldIdentifier = "";
@@ -126,17 +166,24 @@ public class CSharpListener extends CSharpParserBaseListener {
         for (CSharpParser.Variable_declaratorContext atributo : ctx.variable_declarators().variable_declarator()) {
             fieldIdentifier = this.tokens.getText(atributo.identifier().getSourceInterval());
         }
-        FileCreator.appendToXmlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
+        FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Associa comentarios aos atributos
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitField_declaration(CSharpParser.Field_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
-        FileCreator.appendToXmlFile("\t\t\t</field>\n");
+        FileCreator.appendToVxlFile("\t\t\t</field>\n");
     }
 
-    //Extrai o construtor
+    /**
+     * Extrai o constructor
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
@@ -147,18 +194,25 @@ public class CSharpListener extends CSharpParserBaseListener {
             args.setLength(0);
         }
 
-        FileCreator.appendToXmlFile("\t\t\t<constr name=\"" + constructorIdentifier + "(" + this.args + ")" +
+        FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + "(" + this.args + ")" +
                 "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Associa comentarios ao constructor
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
-        FileCreator.appendToXmlFile("\t\t\t</constr>\n");
+        FileCreator.appendToVxlFile("\t\t\t</constr>\n");
     }
 
-    //Extrai os modificadores de atributos e metodos da classe
+    /**
+     * Extrai os modificadores de atributos e metodos da classe
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterAll_member_modifiers(CSharpParser.All_member_modifiersContext ctx) {
         String temp;
@@ -172,7 +226,10 @@ public class CSharpListener extends CSharpParserBaseListener {
         }
     }
 
-    //Extrai os getters e setters
+    /**
+     * Extrai os getters e setters
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         String propertyIdentifier = this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0));
@@ -181,17 +238,25 @@ public class CSharpListener extends CSharpParserBaseListener {
             callGraph.setNodes(propertyIdentifier);
         }
 
-        FileCreator.appendToXmlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+        FileCreator.appendToVxlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Associa comentarios aos propertys
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         commentsExtractor.associateComments(ctx);
         this.funcaoAtual = null;
-        FileCreator.appendToXmlFile("\t\t\t</prpty>\n");
+        FileCreator.appendToVxlFile("\t\t\t</prpty>\n");
     }
 
+    /**
+     * Extrai os identifiers dos argumentos dos metodos
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterArg_declaration(CSharpParser.Arg_declarationContext ctx) {
         String argIdentifier = this.tokens.getText(ctx.identifier());
@@ -199,10 +264,13 @@ public class CSharpListener extends CSharpParserBaseListener {
         argIdentifier = argIdentifier.replace("<", "&lt;");
         argIdentifier = argIdentifier.replace(">", "&gt;");
 
-        FileCreator.appendToXmlFile("\t\t\t\t<arg name=\"" + argIdentifier + "\"></arg>\n");
+        FileCreator.appendToVxlFile("\t\t\t\t<arg name=\"" + argIdentifier + "\"></arg>\n");
     }
 
-    // Extrai a variavel local da classe
+    /**
+     * Extrai a variavel local do metodo
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterLocal_variable_declaration(CSharpParser.Local_variable_declarationContext ctx) {
         String variableType = this.tokens.getText(ctx.local_variable_type());
@@ -211,9 +279,13 @@ public class CSharpListener extends CSharpParserBaseListener {
         variableType = variableType.replace("<", "&lt;");
         variableType = variableType.replace(">", "&gt;");
 
-        FileCreator.appendToXmlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType + "\"></lvar>\n");
+        FileCreator.appendToVxlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType + "\"></lvar>\n");
     }
 
+    /**
+     * Extrai acesso a membros
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterMember_access(CSharpParser.Member_accessContext ctx) {
         String mth = this.tokens.getText(ctx.identifier().getSourceInterval());
@@ -225,48 +297,74 @@ public class CSharpListener extends CSharpParserBaseListener {
         }
     }
 
-    // Extrai Struct
+    /**
+     * Extrai o struct
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterStruct_definition(CSharpParser.Struct_definitionContext ctx) {
         String structIdentifier = this.tokens.getText(ctx.identifier());
-        FileCreator.appendToXmlFile("\t\t\t<struct name=\"" + structIdentifier +
+        FileCreator.appendToVxlFile("\t\t\t<struct name=\"" + structIdentifier +
                 "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Associa comentarios ao struct
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitStruct_definition(CSharpParser.Struct_definitionContext ctx) {
-        FileCreator.appendToXmlFile("\t\t\t</struct>\n");
+        commentsExtractor.associateComments(ctx);
+        FileCreator.appendToVxlFile("\t\t\t</struct>\n");
     }
 
-    //Extrai Enum
+    /**
+     * Extrai o enum
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         String enumIdentifier = this.tokens.getText(ctx.identifier());
-        FileCreator.appendToXmlFile("\t\t\t<enum name=\"" + enumIdentifier +
+        FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier +
                 "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Fecha tag do enum
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitEnum_definition(CSharpParser.Enum_definitionContext ctx) {
-        FileCreator.appendToXmlFile("\t\t\t</enum>\n");
+        FileCreator.appendToVxlFile("\t\t\t</enum>\n");
     }
 
-    //Extrai Interface
+    /**
+     * Extrai a interface
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterInterface_definition(CSharpParser.Interface_definitionContext ctx) {
         String interfaceIdentifier = this.tokens.getText(ctx.identifier());
-        FileCreator.appendToXmlFile("\t\t\t<intfc name=\"" + interfaceIdentifier +
+        FileCreator.appendToVxlFile("\t\t\t<intfc name=\"" + interfaceIdentifier +
                 "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
     }
 
+    /**
+     * Fecha tag da interface
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void exitInterface_definition(CSharpParser.Interface_definitionContext ctx) {
-        FileCreator.appendToXmlFile("\t\t\t</intfc>\n");
+        FileCreator.appendToVxlFile("\t\t\t</intfc>\n");
     }
 
+    /**
+     * Extrai chamadas de metodos
+     * @param ctx Entidade da Parser Tree
+     */
     @Override
     public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx) {
         String mth;

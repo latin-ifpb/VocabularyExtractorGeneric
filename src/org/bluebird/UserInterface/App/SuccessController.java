@@ -9,6 +9,9 @@ public class SuccessController {
     @FXML
     private Button confirmButton;
 
+    /**
+     * Espera o usuario confirmar que foi concluido a extracao
+     */
     @FXML
     public void confirmExtraction() {
         WindowsInit.closeCurrentWindow(confirmButton);

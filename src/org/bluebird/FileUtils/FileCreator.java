@@ -11,18 +11,37 @@ public class FileCreator {
     private static StringBuffer graphDotFile = new StringBuffer();
     private static StringBuffer txtFile = new StringBuffer();
 
+    /**
+     * Retorna o string do grafo
+     * @return String do grafo
+     */
     public static StringBuffer getGraphDotFile() {
         return FileCreator.graphDotFile;
     }
 
+    /**
+     * Retorna o string do vxl
+     * @return String do vxl
+     */
     public static StringBuffer getVxlFile() {
         return FileCreator.vxlFile;
     }
 
+    /**
+     * Retorna o string da analise do grafo
+     * @return String do txt
+     */
     public static StringBuffer getTxtFile() {
         return FileCreator.txtFile;
     }
 
+    /**
+     * Salva um arquivo
+     * @param fileName Nome do arquivo
+     * @param path Caminho do arquivo
+     * @param type String do arquivo para processar
+     * @param format Formato do arquivo
+     */
     public static void saveFile(String fileName, String path, StringBuffer type, String format) {
         FileWriter fileWriter;
         BufferedWriter writer;
@@ -44,14 +63,26 @@ public class FileCreator {
         }
     }
 
-    public static void appendToXmlFile(String content) {
+    /**
+     * Adiciona a string do vxl
+     * @param content Conteudo para adc
+     */
+    public static void appendToVxlFile(String content) {
         FileCreator.vxlFile.append(content);
     }
 
+    /**
+     * Adiciona a string do grafo
+     * @param content Conteudo para adc
+     */
     public static void appendToDotFile(String content) {
         FileCreator.graphDotFile.append(content);
     }
 
+    /**
+     * Adiciona a string do txt
+     * @param content Conteudo para adc
+     */
     public static void appendToTxtFile(String content) {
         FileCreator.txtFile.append(content);
     }
