@@ -4,14 +4,13 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bluebird.LanguagesUtil.Java.JavaParser;
 import org.bluebird.LanguagesUtil.Java.JavaParserBaseListener;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.util.Stack;
 
 public class JavaListener extends JavaParserBaseListener {
 
     private TokenStream tokens;
-    private String modifiersClassInterface;
+    private String modifiersClassInterface = "";
     private String modifiersVariable;
     private Stack<Integer> ruleIndex;
 
@@ -28,8 +27,8 @@ public class JavaListener extends JavaParserBaseListener {
         if (temp.equals("public") || temp.equals("private") || temp.equals("protected")){
             this.modifiersClassInterface = temp;
         }
-
     }
+
     /**
      * Extrai as classes
      * @param ctx Entidade da Parser Tree
@@ -39,8 +38,8 @@ public class JavaListener extends JavaParserBaseListener {
         TerminalNode classIdentifier = ctx.IDENTIFIER();
         //ruleIndex.push(ctx.getStart().getLine());
         //FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiersClassInterface + "\">\n");
-
         System.out.println(this.modifiersClassInterface + " " + ctx.CLASS() + " " + classIdentifier);
+        this.modifiersClassInterface = "default";
     }
     /**
      * Extrai os metodos
@@ -49,8 +48,9 @@ public class JavaListener extends JavaParserBaseListener {
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         TerminalNode methodIdentifier = ctx.IDENTIFIER();
+        String methodParamenters = this.tokens.getText(ctx.formalParameters());
         String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid());
-        System.out.println("\t" + typeMethod + " " + methodIdentifier);
+        System.out.println("\t" + typeMethod + " " + methodIdentifier + " " + methodParamenters);
     }
     /**
      * Extrai os atributos e seus respectivos tipos
@@ -60,7 +60,8 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
         String fieldIdentifier =  this.tokens.getText(ctx.variableDeclarators().variableDeclarator(0).variableDeclaratorId().getSourceInterval());
         String typeField = this.tokens.getText(ctx.typeType());
-        System.out.println("\t" + typeField + " " + fieldIdentifier);
+        System.out.println("\t" + this.modifiersClassInterface + " "+ typeField + " " + fieldIdentifier);
+        this.modifiersClassInterface = "default";
     }
     /**
      * Extrai os construtores e seus respectivos parametros
@@ -74,14 +75,13 @@ public class JavaListener extends JavaParserBaseListener {
                 constructorParameters);
     }
     /**
-     * Extrai o acesso das variaveis 
+     * Extrai o acesso das variaveis
      * @param ctx Entidade da Parser Tree
      */
     public void enterVariableModifier(JavaParser.VariableModifierContext ctx) {
         String temp = this.tokens.getText(ctx.annotation());
         System.out.println(temp);
     }
-
 
 
 
