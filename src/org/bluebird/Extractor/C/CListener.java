@@ -62,7 +62,7 @@ public class CListener extends CBaseListener {
             functionType = this.tokens.getText(type.typeSpecifier());
         }
 
-        FileCreator.appendToXmlFile("<fnc name=\"" + functionName + "\" type=\"" + functionType + "\" >\n");
+        //FileCreator.appendToXmlFile("<fnc name=\"" + functionName + "\" type=\"" + functionType + "\" >\n");
     }
 
     /**
@@ -72,7 +72,7 @@ public class CListener extends CBaseListener {
     @Override
     public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
         commentsExtractor.associateComments(ctx);
-        FileCreator.appendToXmlFile("</fnc>\n");
+        //FileCreator.appendToXmlFile("</fnc>\n");
     }
 
     /**
@@ -89,7 +89,7 @@ public class CListener extends CBaseListener {
                 functionType = this.tokens.getText(type.typeSpecifier());
             }
 
-            FileCreator.appendToXmlFile("\t<arg name=\"" + argName + "\" type=\"" + functionType + "\" ></arg>\n");
+            //FileCreator.appendToXmlFile("\t<arg name=\"" + argName + "\" type=\"" + functionType + "\" ></arg>\n");
         }
     }
 }

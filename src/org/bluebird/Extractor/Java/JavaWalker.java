@@ -24,7 +24,7 @@ public class JavaWalker implements LanguageWalker {
         JavaParser parser = new JavaParser(tokens);
         ParserRuleContext tree = parser.compilationUnit();
         ParseTreeWalker walker = new ParseTreeWalker();
-        JavaListener extractor = new JavaListener(parser);
+        JavaListener extractor = new JavaListener(parser, tokens);
         walker.walk(extractor, tree);
     }
 
