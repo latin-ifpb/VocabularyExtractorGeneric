@@ -142,11 +142,29 @@ public class JavaListener extends JavaParserBaseListener {
                 "\" acess=\"\">\n");
 
     }
+    /**
+     * Extrai a interface
+     * @param ctx Entidade da Parser Tree
+     */
     public void enterInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         TerminalNode interfaceIdentifier = ctx.IDENTIFIER();
-        System.out.println(this.modifiersClassOrInterface + " " + ctx.INTERFACE() + " " + interfaceIdentifier);
+        //System.out.println(this.modifiersClassOrInterface + " " + ctx.INTERFACE() + " " + interfaceIdentifier);
+        FileCreator.appendToVxlFile("\t\t\t<intfc name=\"" + interfaceIdentifier +
+                "\" acess=\"" + this.modifiersClassOrInterface + "\">\n");
         this.modifiersClassOrInterface = "default";
     }
+    /**
+     * Fecha tag da interface
+     * @param ctx Entidade da Parser Tree
+     */
+    public void exitInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
+        FileCreator.appendToVxlFile("\t\t\t</intfc>\n");
+
+    }
+    /**
+     * Extrai os modificadores das classes e interfaces
+     * @param ctx Entidade da Parser Tree
+     */
     public void enterTypeDeclaration(JavaParser.TypeDeclarationContext ctx) {
         String temp = " ";
         for (int i = 0; i < ctx.classOrInterfaceModifier().size(); i ++ ){
@@ -156,6 +174,10 @@ public class JavaListener extends JavaParserBaseListener {
             this.modifiersClassOrInterface = temp;
         }
     }
+    /**
+     * Extrai a variavel local do metodo
+     * @param ctx Entidade da Parser Tree
+     */
     public void enterLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
         String variableIdentifier = this.tokens.getText(ctx.variableDeclarators().variableDeclarator(0));
         variableIdentifier = breakString(variableIdentifier);
@@ -164,6 +186,10 @@ public class JavaListener extends JavaParserBaseListener {
         FileCreator.appendToVxlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType);
 
     }
+    /**
+    Metodo que tira a declaração das variaveis locais e deixa apenas o seu tipo e nome
+     @param identifier entidade do Metodo enterLocalVariableDeclaration
+     */
     public String breakString(String identifier){
         String[] temp;
         for (int i = 0; i < identifier.length(); i++){
