@@ -1,13 +1,12 @@
-// Generated from /home/anderson/ProgrammingProjects/Java Projects/C#VocabularyExtractor/src/com/company/Java/java/JavaLexer.g4 by ANTLR 4.7
+// Generated from /home/anderson/ProgrammingProjects/Java Projects/Projeto_POO/src/org/bluebird/LanguagesUtil/Java/JavaLexer.g4 by ANTLR 4.7
 package org.bluebird.LanguagesUtil.Java;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
+
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNDeserializer;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class JavaLexer extends Lexer {
@@ -34,8 +33,10 @@ public class JavaLexer extends Lexer {
 		DIV_ASSIGN=96, AND_ASSIGN=97, OR_ASSIGN=98, XOR_ASSIGN=99, MOD_ASSIGN=100, 
 		LSHIFT_ASSIGN=101, RSHIFT_ASSIGN=102, URSHIFT_ASSIGN=103, ARROW=104, COLONCOLON=105, 
 		AT=106, ELLIPSIS=107, WS=108, COMMENT=109, LINE_COMMENT=110, IDENTIFIER=111;
+	public static final int
+		COMMENTS_CHANNEL=2;
 	public static String[] channelNames = {
-		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
+		"DEFAULT_TOKEN_CHANNEL", "HIDDEN", "COMMENTS_CHANNEL"
 	};
 
 	public static String[] modeNames = {
@@ -452,10 +453,10 @@ public class JavaLexer extends Lexer {
 		"\u035b\3\2\2\2\u0358\u035a\13\2\2\2\u0359\u0358\3\2\2\2\u035a\u035d\3"+
 		"\2\2\2\u035b\u035c\3\2\2\2\u035b\u0359\3\2\2\2\u035c\u035e\3\2\2\2\u035d"+
 		"\u035b\3\2\2\2\u035e\u035f\7,\2\2\u035f\u0360\7\61\2\2\u0360\u0361\3\2"+
-		"\2\2\u0361\u0362\bn\2\2\u0362\u00dc\3\2\2\2\u0363\u0364\7\61\2\2\u0364"+
+		"\2\2\u0361\u0362\bn\3\2\u0362\u00dc\3\2\2\2\u0363\u0364\7\61\2\2\u0364"+
 		"\u0365\7\61\2\2\u0365\u0369\3\2\2\2\u0366\u0368\n\22\2\2\u0367\u0366\3"+
 		"\2\2\2\u0368\u036b\3\2\2\2\u0369\u0367\3\2\2\2\u0369\u036a\3\2\2\2\u036a"+
-		"\u036c\3\2\2\2\u036b\u0369\3\2\2\2\u036c\u036d\bo\2\2\u036d\u00de\3\2"+
+		"\u036c\3\2\2\2\u036b\u0369\3\2\2\2\u036c\u036d\bo\3\2\u036d\u00de\3\2"+
 		"\2\2\u036e\u0372\5\u00edw\2\u036f\u0371\5\u00ebv\2\u0370\u036f\3\2\2\2"+
 		"\u0371\u0374\3\2\2\2\u0372\u0370\3\2\2\2\u0372\u0373\3\2\2\2\u0373\u00e0"+
 		"\3\2\2\2\u0374\u0372\3\2\2\2\u0375\u0377\t\23\2\2\u0376\u0378\t\16\2\2"+
@@ -484,7 +485,7 @@ public class JavaLexer extends Lexer {
 		"\u025e\u0261\u0267\u026e\u0272\u0275\u027d\u0281\u0284\u0289\u028d\u0290"+
 		"\u0293\u0298\u029b\u029d\u02a3\u02a6\u02aa\u02ae\u02b2\u02bd\u02c2\u02c9"+
 		"\u02cb\u0351\u035b\u0369\u0372\u0377\u037f\u0382\u0389\u0390\u0395\u0397"+
-		"\u039b\u03a3\u03a7\u03ab\u03b1\3\2\3\2";
+		"\u039b\u03a3\u03a7\u03ab\u03b1\4\2\3\2\2\4\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
