@@ -24,10 +24,18 @@ public class JavaListener extends JavaParserBaseListener {
         this.ruleIndex = new Stack<>();
         this.commentsExtractor = new CommentsExtractor(tokenStream);
     }
+    /**
+     * Inicia a extração do arquivo Java e pega todos comentarios do arquivo
+     * @param ctx Entidade da Parser Tree
+     */
     public void enterCompilationUnit(JavaParser.CompilationUnitContext ctx) {
-        commentsExtractor.getAllComments(ctx, JavaLexer.COMMENT);
+        commentsExtractor.getAllComments(ctx, JavaLexer.COMMENTS_CHANNEL);
         this.ruleIndex.push(1);
     }
+    /**
+     * Termina a extração do arquivo Java
+     * @param ctx Entidade da Parser Tree
+     */
     public void exitCompilationUnit(JavaParser.CompilationUnitContext ctx) {
         commentsExtractor.associateComments(ctx);
     }
