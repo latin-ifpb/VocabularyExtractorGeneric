@@ -16,6 +16,11 @@ import static org.bluebird.FileUtils.FileBrowser.readFile;
 
 public class JavaWalker implements LanguageWalker {
 
+    /**
+     * Pecorre a arvore gerada do codigo fonte
+     * @param file Arquivo a ser pecorrido
+     * @throws IOException Erro de leitura do arquivo
+     */
     @Override
     public void walkFileTree(File file) throws IOException {
         String code = readFile(file, Charset.forName("UTF-8"));
@@ -28,6 +33,10 @@ public class JavaWalker implements LanguageWalker {
         walker.walk(extractor, tree);
     }
 
+    /**
+     * Diz qual formato de arquivo da linguagem
+     * @return Formato do arquivo
+     */
     @Override
     public String languageFormat() {
         return "java";

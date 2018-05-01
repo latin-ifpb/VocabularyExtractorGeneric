@@ -521,6 +521,12 @@ public interface CVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExternalDeclaration(CParser.ExternalDeclarationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CParser#functionIdentifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionIdentifier(CParser.FunctionIdentifierContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
