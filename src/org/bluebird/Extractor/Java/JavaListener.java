@@ -46,6 +46,17 @@ public class JavaListener extends JavaParserBaseListener {
      * @param ctx Entidade da Parser Tree
      */
 
+    public void enterPackageDeclaration(JavaParser.PackageDeclarationContext ctx) {
+        String packageIdentifier = this.tokens.getText(ctx.qualifiedName());
+        ruleIndex.push(ctx.getStart().getLine());
+        FileCreator.appendToVxlFile("\t<pack name=\""+packageIdentifier+"\">\n");
+    }
+    public void exitPackageDeclaration(JavaParser.PackageDeclarationContext ctx) {
+        commentsExtractor.associateComments(ctx);
+        ruleIndex.pop();
+        FileCreator.appendToVxlFile("\t<pack>\n");
+    }
+
     public void enterModifier(JavaParser.ModifierContext ctx) {
         String temp = this.tokens.getText(ctx.classOrInterfaceModifier());
         if (temp.equals("public") || temp.equals("private") || temp.equals("protected")){
@@ -62,7 +73,7 @@ public class JavaListener extends JavaParserBaseListener {
         TerminalNode classIdentifier = ctx.IDENTIFIER();
         ruleIndex.push(ctx.getStart().getLine());
         FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\">\n");
-        System.out.println(this.modifiersClassOrInterface + " " + ctx.CLASS() + " " + classIdentifier);
+        //System.out.println(this.modifiersClassOrInterface + " " + ctx.CLASS() + " " + classIdentifier);
         this.modifiersClassOrInterface = "default";
     }
     /**
@@ -83,8 +94,8 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         TerminalNode methodIdentifier = ctx.IDENTIFIER();
         String methodParamenters = this.tokens.getText(ctx.formalParameters());
-        String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid()); //caso precise de adicionar o tipo do metodo no vxl
-        FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + methodParamenters + "\" acess=\"" +
+        String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid());
+        FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + methodParamenters + "\" type=\"" + typeMethod + "\"acess=\"" +
                 this.modifiers + "\">\n");
         //System.out.println("\t" + this.modifiers + " "+ typeMethod + " " + methodIdentifier + " " + methodParamenters);
         this.modifiers = "default";
@@ -104,9 +115,9 @@ public class JavaListener extends JavaParserBaseListener {
     @Override
     public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
         String fieldIdentifier =  this.tokens.getText(ctx.variableDeclarators().variableDeclarator(0).variableDeclaratorId().getSourceInterval());
-        String typeField = this.tokens.getText(ctx.typeType()); //caso precise adicionar o tipo do atributo ao vxl
+        String typeField = this.tokens.getText(ctx.typeType());
         //System.out.println("\t" + this.modifiers + " "+ typeField + " " + fieldIdentifier);
-        FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
+        FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\"type=\""+ typeField + "\" acess=\"" + this.modifiers + "\" >\n");
         this.modifiers = "default";
     }
     /**
@@ -125,7 +136,7 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterConstructorDeclaration(JavaParser.ConstructorDeclarationContext ctx) {
         String constructorParameters = this.tokens.getText(ctx.formalParameters());
         TerminalNode constructorIdentifier = ctx.IDENTIFIER();
-        //System.out.println("\t" + this.modifiers + " " +constructorIdentifier + " " +constructorParameters);
+        //System.out.println("\t" + this.modifiers + " " +constructorIdentifier + " " +typeParameters);
         FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + constructorParameters +
                 "\" acess=\"" + this.modifiers + "\">\n");
         this.modifiers = "default";
@@ -144,10 +155,10 @@ public class JavaListener extends JavaParserBaseListener {
      */
     public void enterEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
         TerminalNode enumIdentifier = ctx.IDENTIFIER();
-        //falta extrair o modificador do enum
         //System.out.println("\t" + this.modifiers + ctx.ENUM() + " " + enumIdentifier);
         FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier +
-                "\" acess=\"\">\n");
+                "\" acess=\""+ this.modifiersClassOrInterface+"\">\n");
+        this.modifiersClassOrInterface = "default";
 
     }
     /**
@@ -178,7 +189,7 @@ public class JavaListener extends JavaParserBaseListener {
         for (int i = 0; i < ctx.classOrInterfaceModifier().size(); i ++ ){
             temp = this.tokens.getText(ctx.classOrInterfaceModifier(i));
         }
-        if (temp.equals("public") || temp.equals("private") || temp.equals("protected")){
+        if (temp.equals("public") || temp.equals("private") || temp.equals("protected") ){
             this.modifiersClassOrInterface = temp;
         }
     }
@@ -191,7 +202,7 @@ public class JavaListener extends JavaParserBaseListener {
         variableIdentifier = breakString(variableIdentifier);
         String variableType = this.tokens.getText(ctx.typeType());
         //System.out.println("\t\t" + variableType + " " + variableIdentifier);
-        FileCreator.appendToVxlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType);
+        FileCreator.appendToVxlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType +"\"\n");
 
     }
     /**
@@ -206,6 +217,7 @@ public class JavaListener extends JavaParserBaseListener {
         }
         return identifier;
     }
+
 
 
 
