@@ -1,12 +1,11 @@
-// Generated from /home/anderson/ProgrammingProjects/Java Projects/C#VocabularyExtractor/src/com/company/CSharp/CSharpLexer.g4 by ANTLR 4.7
 package org.bluebird.LanguagesUtil.CSharp;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNDeserializer;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.*;
 
 import java.util.Stack;
 

@@ -1,4 +1,3 @@
-// Generated from /home/anderson/ProgrammingProjects/Java Projects/Projeto_POO/src/org/bluebird/LanguagesUtil/C/C.g4 by ANTLR 4.7
 package org.bluebird.LanguagesUtil.C;
 
 import org.antlr.v4.runtime.ParserRuleContext;

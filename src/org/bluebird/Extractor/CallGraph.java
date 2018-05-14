@@ -55,26 +55,26 @@ public class CallGraph {
      * Converte a string do grafo para o arquivo dot
      */
     public static void toDOT() {
-        FileCreator.appendToDotFile("digraph G{\n");
+        FileCreator.appendToGraphDotFile("digraph G{\n");
 
         for (String node : nodes) {
-            FileCreator.appendToDotFile(node);
-            FileCreator.appendToDotFile("; ");
+            FileCreator.appendToGraphDotFile(node);
+            FileCreator.appendToGraphDotFile("; ");
         }
 
-        FileCreator.appendToDotFile("\n");
+        FileCreator.appendToGraphDotFile("\n");
 
         for (String src : edges.keySet()) {
             for (String trg : edges.get(src)) {
-                FileCreator.appendToDotFile(" ");
-                FileCreator.appendToDotFile("\t" + src);
-                FileCreator.appendToDotFile("  ->  ");
-                FileCreator.appendToDotFile(trg);
-                FileCreator.appendToDotFile(";\n");
+                FileCreator.appendToGraphDotFile(" ");
+                FileCreator.appendToGraphDotFile("\t" + src);
+                FileCreator.appendToGraphDotFile("  ->  ");
+                FileCreator.appendToGraphDotFile(trg);
+                FileCreator.appendToGraphDotFile(";\n");
             }
         }
 
-        FileCreator.appendToDotFile("}\n");
+        FileCreator.appendToGraphDotFile("}\n");
         nodes.clear();
         edges.clear();
     }
@@ -85,11 +85,11 @@ public class CallGraph {
     public static void toTxt() {
         CallGraph.searchNotCalledMth();
 
-        FileCreator.appendToTxtFile("Métodos ou Propertys não chamados:\n");
+        FileCreator.appendToGraphTxtFile("Métodos ou Propertys não chamados:\n");
 
         for (String node : CallGraph.notCalledMth) {
-            FileCreator.appendToTxtFile(node);
-            FileCreator.appendToTxtFile("\n");
+            FileCreator.appendToGraphTxtFile(node);
+            FileCreator.appendToGraphTxtFile("\n");
         }
 
         notCalledMth.clear();

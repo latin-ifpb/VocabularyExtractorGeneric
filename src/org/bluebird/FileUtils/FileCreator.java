@@ -9,7 +9,16 @@ public class FileCreator {
 
     private static StringBuffer vxlFile = new StringBuffer();
     private static StringBuffer graphDotFile = new StringBuffer();
-    private static StringBuffer txtFile = new StringBuffer();
+    private static StringBuffer graphTxtFile = new StringBuffer();
+    private static StringBuffer vocabularyTxtFile = new StringBuffer();
+
+    /**
+     * Retorna o string do vocabulario do txt
+     * @return String do txt do vocabulario
+     */
+    public static StringBuffer getVocabularyTxtFile() {
+        return FileCreator.vocabularyTxtFile;
+    }
 
     /**
      * Retorna o string do grafo
@@ -29,10 +38,10 @@ public class FileCreator {
 
     /**
      * Retorna o string da analise do grafo
-     * @return String do txt
+     * @return String do txt do grafo
      */
-    public static StringBuffer getTxtFile() {
-        return FileCreator.txtFile;
+    public static StringBuffer getGraphTxtFile() {
+        return FileCreator.graphTxtFile;
     }
 
     /**
@@ -64,26 +73,34 @@ public class FileCreator {
     }
 
     /**
-     * Adiciona a string do vxl
-     * @param content Conteudo para adc
+     * Adiciona a string ao vxl
+     * @param content Conteudo para adicionar
      */
     public static void appendToVxlFile(String content) {
         FileCreator.vxlFile.append(content);
     }
 
     /**
-     * Adiciona a string do grafo
-     * @param content Conteudo para adc
+     * Adiciona a string ao dot do grafo
+     * @param content Conteudo para adicionar
      */
-    public static void appendToDotFile(String content) {
+    public static void appendToGraphDotFile(String content) {
         FileCreator.graphDotFile.append(content);
     }
 
     /**
-     * Adiciona a string do txt
-     * @param content Conteudo para adc
+     * Adiciona a string ao txt do grafo
+     * @param content Conteudo para adicionar
      */
-    public static void appendToTxtFile(String content) {
-        FileCreator.txtFile.append(content);
+    public static void appendToGraphTxtFile(String content) {
+        FileCreator.graphTxtFile.append(content);
+    }
+
+    /**
+     * Adiciona a string ao txt do vocabulario
+     * @param content Conteudo para adicionar
+     */
+    public static void appendToVocabularyTxtFile(String content) {
+        FileCreator.vocabularyTxtFile.append(content);
     }
 }

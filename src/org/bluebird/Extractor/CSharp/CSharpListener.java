@@ -4,11 +4,11 @@ import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
+import org.bluebird.Extractor.Setup.ExtractorOptions;
 import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
 import org.bluebird.LanguagesUtil.CSharp.CSharpParserBaseListener;
-import org.bluebird.UserInterface.App.AppController;
 
 import java.util.Stack;
 
@@ -60,8 +60,10 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void enterCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
-        commentsExtractor.getAllComments(ctx, CSharpLexer.COMMENTS_CHANNEL);
-        this.ruleIndex.push(1);
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.getAllComments(ctx, CSharpLexer.COMMENTS_CHANNEL);
+            this.ruleIndex.push(1);
+        }
     }
 
     /**
@@ -70,7 +72,9 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
-        commentsExtractor.associateComments(ctx);
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+        }
     }
 
     /**
@@ -81,8 +85,14 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
 
-        ruleIndex.push(ctx.getStart().getLine());
-        FileCreator.appendToVxlFile("\t<nmspc name=\"" + namespaceIdentifier + "\">\n");
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("namespace " + namespaceIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            ruleIndex.push(ctx.getStart().getLine());
+            FileCreator.appendToVxlFile("\t<nmspc name=\"" + namespaceIdentifier + "\">\n");
+        }
     }
 
     /**
@@ -91,9 +101,11 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        ruleIndex.pop();
-        FileCreator.appendToVxlFile("\t</nmspc>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            ruleIndex.pop();
+            FileCreator.appendToVxlFile("\t</nmspc>\n");
+        }
     }
 
     /**
@@ -104,9 +116,15 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
 
-        ruleIndex.push(ctx.getStart().getLine());
-        FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
-        this.modifiers = "default";
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("class " + classIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            ruleIndex.push(ctx.getStart().getLine());
+            FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -115,9 +133,11 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitClass_definition(CSharpParser.Class_definitionContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        ruleIndex.pop();
-        FileCreator.appendToVxlFile("\t\t</class>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            ruleIndex.pop();
+            FileCreator.appendToVxlFile("\t\t</class>\n");
+        }
     }
 
     /**
@@ -128,20 +148,26 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
 
-        if(AppController.getCallGraphCheck()) {
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("method " + methodIdentifier + "\n");
+        }
+
+        if(ExtractorOptions.isCallGraphEnabled()) {
             this.funcaoAtual = methodIdentifier;
             callGraph.setNodes(methodIdentifier);
         }
 
-        try {
-            returnArgsType(ctx.formal_parameter_list().fixed_parameters());
-        } catch (NullPointerException e) {
-            args.append("");
-        }
+        if(ExtractorOptions.isVxlEnabled()) {
+            try {
+                returnArgsType(ctx.formal_parameter_list().fixed_parameters());
+            } catch (NullPointerException e) {
+                args.append("");
+            }
 
-        FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + "(" + this.args + ")" + "\" acess=\"" +
-                this.modifiers + "\">\n");
-        this.modifiers = "default";
+            FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + "(" + this.args + ")" + "\" acess=\"" +
+                    this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -150,9 +176,11 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitMethod_declaration(CSharpParser.Method_declarationContext ctx) {
-        commentsExtractor.associateComments(ruleIndex.peek(), ctx);
-        this.funcaoAtual = null;
-        FileCreator.appendToVxlFile("\t\t\t</mth>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ruleIndex.peek(), ctx);
+            this.funcaoAtual = null;
+            FileCreator.appendToVxlFile("\t\t\t</mth>\n");
+        }
     }
 
     /**
@@ -166,8 +194,15 @@ public class CSharpListener extends CSharpParserBaseListener {
         for (CSharpParser.Variable_declaratorContext atributo : ctx.variable_declarators().variable_declarator()) {
             fieldIdentifier = this.tokens.getText(atributo.identifier().getSourceInterval());
         }
-        FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
-        this.modifiers = "default";
+
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("field " + fieldIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -176,8 +211,10 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitField_declaration(CSharpParser.Field_declarationContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        FileCreator.appendToVxlFile("\t\t\t</field>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            FileCreator.appendToVxlFile("\t\t\t</field>\n");
+        }
     }
 
     /**
@@ -188,15 +225,21 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
 
-        try {
-            returnArgsType(ctx.formal_parameter_list().fixed_parameters());
-        } catch (NullPointerException e) {
-            args.setLength(0);
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("constructor " + constructorIdentifier + "\n");
         }
 
-        FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + "(" + this.args + ")" +
-                "\" acess=\"" + this.modifiers + "\">\n");
-        this.modifiers = "default";
+        if (ExtractorOptions.isVxlEnabled()) {
+            try {
+                returnArgsType(ctx.formal_parameter_list().fixed_parameters());
+            } catch (NullPointerException e) {
+                args.setLength(0);
+            }
+
+            FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + "(" + this.args + ")" +
+                    "\" acess=\"" + this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -205,8 +248,10 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        FileCreator.appendToVxlFile("\t\t\t</constr>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            FileCreator.appendToVxlFile("\t\t\t</constr>\n");
+        }
     }
 
     /**
@@ -233,13 +278,20 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         String propertyIdentifier = this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0));
-        if(AppController.getCallGraphCheck()) {
+
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("property " + propertyIdentifier + "\n");
+        }
+
+        if(ExtractorOptions.isCallGraphEnabled()) {
             this.funcaoAtual = propertyIdentifier;
             callGraph.setNodes(propertyIdentifier);
         }
 
-        FileCreator.appendToVxlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
-        this.modifiers = "default";
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -248,9 +300,11 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitProperty_declaration(CSharpParser.Property_declarationContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        this.funcaoAtual = null;
-        FileCreator.appendToVxlFile("\t\t\t</prpty>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            this.funcaoAtual = null;
+            FileCreator.appendToVxlFile("\t\t\t</prpty>\n");
+        }
     }
 
     /**
@@ -261,10 +315,16 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterArg_declaration(CSharpParser.Arg_declarationContext ctx) {
         String argIdentifier = this.tokens.getText(ctx.identifier());
 
-        argIdentifier = argIdentifier.replace("<", "&lt;");
-        argIdentifier = argIdentifier.replace(">", "&gt;");
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("arg " + argIdentifier + "\n");
+        }
 
-        FileCreator.appendToVxlFile("\t\t\t\t<arg name=\"" + argIdentifier + "\"></arg>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            argIdentifier = argIdentifier.replace("<", "&lt;");
+            argIdentifier = argIdentifier.replace(">", "&gt;");
+
+            FileCreator.appendToVxlFile("\t\t\t\t<arg name=\"" + argIdentifier + "\"></arg>\n");
+        }
     }
 
     /**
@@ -276,10 +336,16 @@ public class CSharpListener extends CSharpParserBaseListener {
         String variableType = this.tokens.getText(ctx.local_variable_type());
         String variableIdentifier = this.tokens.getText(ctx.local_variable_declarator(0).identifier());
 
-        variableType = variableType.replace("<", "&lt;");
-        variableType = variableType.replace(">", "&gt;");
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("lvar " + variableIdentifier + "\n");
+        }
 
-        FileCreator.appendToVxlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType + "\"></lvar>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            variableType = variableType.replace("<", "&lt;");
+            variableType = variableType.replace(">", "&gt;");
+
+            FileCreator.appendToVxlFile("\t\t\t<lvar name=\"" + variableIdentifier + "\" type=\"" + variableType + "\"></lvar>\n");
+        }
     }
 
     /**
@@ -304,9 +370,15 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterStruct_definition(CSharpParser.Struct_definitionContext ctx) {
         String structIdentifier = this.tokens.getText(ctx.identifier());
-        FileCreator.appendToVxlFile("\t\t\t<struct name=\"" + structIdentifier +
-                "\" acess=\"" + this.modifiers + "\">\n");
-        this.modifiers = "default";
+
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("struct " + structIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<struct name=\"" + structIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -315,8 +387,10 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitStruct_definition(CSharpParser.Struct_definitionContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        FileCreator.appendToVxlFile("\t\t\t</struct>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            FileCreator.appendToVxlFile("\t\t\t</struct>\n");
+        }
     }
 
     /**
@@ -326,9 +400,15 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         String enumIdentifier = this.tokens.getText(ctx.identifier());
-        FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier +
-                "\" acess=\"" + this.modifiers + "\">\n");
-        this.modifiers = "default";
+
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("enum " + enumIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -337,7 +417,9 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitEnum_definition(CSharpParser.Enum_definitionContext ctx) {
-        FileCreator.appendToVxlFile("\t\t\t</enum>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t</enum>\n");
+        }
     }
 
     /**
@@ -347,9 +429,15 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterInterface_definition(CSharpParser.Interface_definitionContext ctx) {
         String interfaceIdentifier = this.tokens.getText(ctx.identifier());
-        FileCreator.appendToVxlFile("\t\t\t<intfc name=\"" + interfaceIdentifier +
-                "\" acess=\"" + this.modifiers + "\">\n");
-        this.modifiers = "default";
+
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("interface " + interfaceIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<intfc name=\"" + interfaceIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            this.modifiers = "default";
+        }
     }
 
     /**
@@ -358,7 +446,9 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void exitInterface_definition(CSharpParser.Interface_definitionContext ctx) {
-        FileCreator.appendToVxlFile("\t\t\t</intfc>\n");
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t</intfc>\n");
+        }
     }
 
     /**
@@ -369,7 +459,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx) {
         String mth;
 
-        if(AppController.getCallGraphCheck()) {
+        if(ExtractorOptions.isCallGraphEnabled()) {
             for (int i = 0; i < ctx.method_invocation().size(); i++) {
 
                 try {

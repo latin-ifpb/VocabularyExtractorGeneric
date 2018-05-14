@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
+import org.bluebird.Extractor.Setup.ExtractorOptions;
 import org.bluebird.FileUtils.FileBrowser;
 import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtil.C.CBaseListener;
@@ -37,9 +38,15 @@ public class CListener extends CBaseListener {
      */
     @Override
     public void enterCompilationUnit(CParser.CompilationUnitContext ctx) {
-        FileCreator.appendToVxlFile("<file name=\"" + FileBrowser.getActualFile() + "\" >\n");
-        commentsExtractor.getAllComments(ctx, COMMENTS_CHANNEL);
-        this.ruleIndex.push(1);
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("file " + FileBrowser.getActualFile() + "\n");
+        }
+
+        if(ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("<file name=\"" + FileBrowser.getActualFile() + "\" >\n");
+            commentsExtractor.getAllComments(ctx, COMMENTS_CHANNEL);
+            this.ruleIndex.push(1);
+        }
     }
 
     /**
@@ -48,8 +55,10 @@ public class CListener extends CBaseListener {
      */
     @Override
     public void exitCompilationUnit(CParser.CompilationUnitContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        FileCreator.appendToVxlFile("</file>\n");
+        if(ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            FileCreator.appendToVxlFile("</file>\n");
+        }
     }
 
     /**
@@ -58,17 +67,23 @@ public class CListener extends CBaseListener {
      */
     @Override
     public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-        String functionName = this.tokens.getText(ctx.functionIdentifier());
+        String functionIdentifier = this.tokens.getText(ctx.functionIdentifier());
         StringBuilder functionType = new StringBuilder();
 
-        for (CParser.DeclarationSpecifierContext type : ctx.declarationSpecifiers().declarationSpecifier()) {
-            if(type.typeSpecifier() != null) {
-                functionType.append(this.tokens.getText(type.typeSpecifier()));
-                functionType.append(" ");
-            }
+        if (ExtractorOptions.isVocabularytxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("function " + functionIdentifier + "\n");
         }
 
-        FileCreator.appendToVxlFile("\t<fnc name=\"" + functionName + "\" type=\"" + functionType + "\" >\n");
+        if(ExtractorOptions.isVxlEnabled()) {
+            for (CParser.DeclarationSpecifierContext type : ctx.declarationSpecifiers().declarationSpecifier()) {
+                if (type.typeSpecifier() != null) {
+                    functionType.append(this.tokens.getText(type.typeSpecifier()));
+                    functionType.append(" ");
+                }
+            }
+
+            FileCreator.appendToVxlFile("\t<fnc name=\"" + functionIdentifier + "\" type=\"" + functionType + "\" >\n");
+        }
     }
 
     /**
@@ -77,8 +92,10 @@ public class CListener extends CBaseListener {
      */
     @Override
     public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-        commentsExtractor.associateComments(ctx);
-        FileCreator.appendToVxlFile("\t</fnc>\n");
+        if(ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            FileCreator.appendToVxlFile("\t</fnc>\n");
+        }
     }
 
     /**
@@ -91,13 +108,19 @@ public class CListener extends CBaseListener {
         String varIdentifier;
 
         if(ctx.declaration() != null) {
-            for(CParser.DeclarationSpecifierContext type : ctx.declaration().declarationSpecifiers().declarationSpecifier()) {
-                varType.append(this.tokens.getText(type));
-            }
-
             varIdentifier = this.tokens.getText(ctx.declaration().initDeclaratorList().initDeclarator().declarator());
 
-            FileCreator.appendToVxlFile("\t\t<lvar name=\"" + varIdentifier + "\" type=\"" + varType + "\" ></lvar>\n");
+            if (ExtractorOptions.isVocabularytxtEnabled()) {
+                FileCreator.appendToVocabularyTxtFile("lvar " + varIdentifier + "\n");
+            }
+
+            if(ExtractorOptions.isVxlEnabled()) {
+                for(CParser.DeclarationSpecifierContext type : ctx.declaration().declarationSpecifiers().declarationSpecifier()) {
+                    varType.append(this.tokens.getText(type));
+                }
+
+                FileCreator.appendToVxlFile("\t\t<lvar name=\"" + varIdentifier + "\" type=\"" + varType + "\" ></lvar>\n");
+            }
         }
     }
 
@@ -109,18 +132,24 @@ public class CListener extends CBaseListener {
     @Override
     public void enterParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
         if (ctx.declarator() != null) {
-            String argName = this.tokens.getText(ctx.declarator());
+            String argIdentifier = this.tokens.getText(ctx.declarator());
             StringBuilder functionType = new StringBuilder();
 
-            try{
-                for (CParser.DeclarationSpecifierContext type : ctx.declarationSpecifiers().declarationSpecifier()) {
-                    functionType.append(this.tokens.getText(type.typeSpecifier()));
-                }
-            } catch (NullPointerException e) {
-                functionType.append("");
+            if (ExtractorOptions.isVocabularytxtEnabled()) {
+                FileCreator.appendToVocabularyTxtFile("arg " + argIdentifier + "\n");
             }
 
-            FileCreator.appendToVxlFile("\t\t<arg name=\"" + argName + "\" type=\"" + functionType + "\" ></arg>\n");
+            if(ExtractorOptions.isVxlEnabled()) {
+                try {
+                    for (CParser.DeclarationSpecifierContext type : ctx.declarationSpecifiers().declarationSpecifier()) {
+                        functionType.append(this.tokens.getText(type.typeSpecifier()));
+                    }
+                } catch (NullPointerException e) {
+                    functionType.append("");
+                }
+
+                FileCreator.appendToVxlFile("\t\t<arg name=\"" + argIdentifier + "\" type=\"" + functionType + "\" ></arg>\n");
+            }
         }
     }
 
@@ -131,10 +160,19 @@ public class CListener extends CBaseListener {
     @Override
     public void enterStructOrUnionSpecifier(CParser.StructOrUnionSpecifierContext ctx) {
         String structOrUnion;
+        String structOrUnionIdentifier;
 
-        if(ctx.structDeclarationList() != null) {
+        if (ctx.structDeclarationList() != null) {
             structOrUnion = this.tokens.getText(ctx.structOrUnion());
-            FileCreator.appendToVxlFile("<" + structOrUnion + " name=\"" + ctx.Identifier() + "\" >\n");
+            structOrUnionIdentifier = ctx.Identifier().toString();
+
+            if (ExtractorOptions.isVocabularytxtEnabled()) {
+                FileCreator.appendToVocabularyTxtFile(structOrUnion+ " " + structOrUnionIdentifier + "\n");
+            }
+
+            if(ExtractorOptions.isVxlEnabled()) {
+                FileCreator.appendToVxlFile("<" + structOrUnion + " name=\"" + structOrUnionIdentifier + "\" >\n");
+            }
         }
     }
 
@@ -144,12 +182,14 @@ public class CListener extends CBaseListener {
      */
     @Override
     public void exitStructOrUnionSpecifier(CParser.StructOrUnionSpecifierContext ctx) {
-        String structOrUnion;
-        commentsExtractor.associateComments(ctx);
+        if(ExtractorOptions.isVxlEnabled()) {
+            String structOrUnion;
+            commentsExtractor.associateComments(ctx);
 
-        if(ctx.structDeclarationList() != null) {
-            structOrUnion = this.tokens.getText(ctx.structOrUnion());
-            FileCreator.appendToVxlFile("</" + structOrUnion + ">\n");
+            if (ctx.structDeclarationList() != null) {
+                structOrUnion = this.tokens.getText(ctx.structOrUnion());
+                FileCreator.appendToVxlFile("</" + structOrUnion + ">\n");
+            }
         }
     }
 
