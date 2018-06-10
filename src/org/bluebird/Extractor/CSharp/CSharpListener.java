@@ -85,7 +85,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("namespace " + namespaceIdentifier + "\n");
         }
 
@@ -116,7 +116,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("class " + classIdentifier + "\n");
         }
 
@@ -148,7 +148,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("method " + methodIdentifier + "\n");
         }
 
@@ -195,7 +195,7 @@ public class CSharpListener extends CSharpParserBaseListener {
             fieldIdentifier = this.tokens.getText(atributo.identifier().getSourceInterval());
         }
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("field " + fieldIdentifier + "\n");
         }
 
@@ -225,7 +225,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("constructor " + constructorIdentifier + "\n");
         }
 
@@ -279,7 +279,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         String propertyIdentifier = this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0));
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("property " + propertyIdentifier + "\n");
         }
 
@@ -315,7 +315,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterArg_declaration(CSharpParser.Arg_declarationContext ctx) {
         String argIdentifier = this.tokens.getText(ctx.identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("arg " + argIdentifier + "\n");
         }
 
@@ -336,7 +336,7 @@ public class CSharpListener extends CSharpParserBaseListener {
         String variableType = this.tokens.getText(ctx.local_variable_type());
         String variableIdentifier = this.tokens.getText(ctx.local_variable_declarator(0).identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("lvar " + variableIdentifier + "\n");
         }
 
@@ -371,7 +371,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterStruct_definition(CSharpParser.Struct_definitionContext ctx) {
         String structIdentifier = this.tokens.getText(ctx.identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("struct " + structIdentifier + "\n");
         }
 
@@ -401,7 +401,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         String enumIdentifier = this.tokens.getText(ctx.identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("enum " + enumIdentifier + "\n");
         }
 
@@ -430,7 +430,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     public void enterInterface_definition(CSharpParser.Interface_definitionContext ctx) {
         String interfaceIdentifier = this.tokens.getText(ctx.identifier());
 
-        if (ExtractorOptions.isVocabularytxtEnabled()) {
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("interface " + interfaceIdentifier + "\n");
         }
 

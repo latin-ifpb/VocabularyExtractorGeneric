@@ -58,19 +58,12 @@ public class CallGraph {
         FileCreator.appendToGraphDotFile("digraph G{\n");
 
         for (String node : nodes) {
-            FileCreator.appendToGraphDotFile(node);
-            FileCreator.appendToGraphDotFile("; ");
+            FileCreator.appendToGraphDotFile("\t"+ node + ";\n");
         }
-
-        FileCreator.appendToGraphDotFile("\n");
 
         for (String src : edges.keySet()) {
             for (String trg : edges.get(src)) {
-                FileCreator.appendToGraphDotFile(" ");
-                FileCreator.appendToGraphDotFile("\t" + src);
-                FileCreator.appendToGraphDotFile("  ->  ");
-                FileCreator.appendToGraphDotFile(trg);
-                FileCreator.appendToGraphDotFile(";\n");
+                FileCreator.appendToGraphDotFile("\t" + src + "  ->  " + trg + ";\n");
             }
         }
 
@@ -85,11 +78,10 @@ public class CallGraph {
     public static void toTxt() {
         CallGraph.searchNotCalledMth();
 
-        FileCreator.appendToGraphTxtFile("Métodos ou Propertys não chamados:\n");
+        FileCreator.appendToGraphTxtFile("Funções não chamadas:\n");
 
         for (String node : CallGraph.notCalledMth) {
-            FileCreator.appendToGraphTxtFile(node);
-            FileCreator.appendToGraphTxtFile("\n");
+            FileCreator.appendToGraphTxtFile(node + "\n");
         }
 
         notCalledMth.clear();

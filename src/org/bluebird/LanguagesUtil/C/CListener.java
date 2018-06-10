@@ -1,4 +1,5 @@
 package org.bluebird.LanguagesUtil.C;
+
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -876,14 +877,4 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CParser#declarationList}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclarationList(CParser.DeclarationListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CParser#declarationList}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclarationList(CParser.DeclarationListContext ctx);
 }

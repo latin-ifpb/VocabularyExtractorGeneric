@@ -41,7 +41,7 @@ public class Runner {
                 } else if (args[i].equals("-vxl")) {
                     ExtractorOptions.setVxlEnabled(true);
                 } else if (args[i].equals("-txt")) {
-                    ExtractorOptions.setVocabularytxtEnabled(true);
+                    ExtractorOptions.setVocabularyTxtEnabled(true);
                 }
             }
 

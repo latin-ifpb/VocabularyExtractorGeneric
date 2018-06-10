@@ -4,7 +4,7 @@ public class ExtractorOptions {
 
     private static boolean callGraphEnabled;
     private static boolean vxlEnabled;
-    private static boolean VocabularytxtEnabled;
+    private static boolean VocabularyTxtEnabled;
 
     /**
      * Verifica se a opção de gerar Call Graph foi marcada
@@ -42,15 +42,15 @@ public class ExtractorOptions {
      * Verifica se a opção de gerar o txt do vocabulario foi marcada
      * @return Boolean da opção do txt do vocabulario
      */
-    public static boolean isVocabularytxtEnabled() {
-        return ExtractorOptions.VocabularytxtEnabled;
+    public static boolean isVocabularyTxtEnabled() {
+        return ExtractorOptions.VocabularyTxtEnabled;
     }
 
     /**
      * Seta a opção de gerar txt do vocabulario
-     * @param vocabularytxtEnabled True ou False para gerar o txt do vocabulario
+     * @param vocabularyTxtEnabled True ou False para gerar o txt do vocabulario
      */
-    public static void setVocabularytxtEnabled(boolean vocabularytxtEnabled) {
-        ExtractorOptions.VocabularytxtEnabled = vocabularytxtEnabled;
+    public static void setVocabularyTxtEnabled(boolean vocabularyTxtEnabled) {
+        ExtractorOptions.VocabularyTxtEnabled = vocabularyTxtEnabled;
     }
 }

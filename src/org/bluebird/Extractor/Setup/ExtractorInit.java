@@ -63,7 +63,7 @@ public class ExtractorInit {
                 FileCreator.saveFile(projectName, fileToSavePath, FileCreator.getGraphDotFile(), "dot");
             }
 
-            if(ExtractorOptions.isVocabularytxtEnabled()) {
+            if(ExtractorOptions.isVocabularyTxtEnabled()) {
                 FileCreator.saveFile(projectName + "Vocabulary", fileToSavePath, FileCreator.getVocabularyTxtFile(), "txt");
             }
         }
