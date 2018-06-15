@@ -12,7 +12,7 @@ public class Runner {
     public static void main(String[] args) {
         ExtractorInit extractorInit = new ExtractorInit();
         String languageOption = "", projectName = "", projectRevision = "", projectPath = "", filePath = "";
-        final String MANUAL = "Invalid input. You must set the following options:"
+        final String MANUAL = "You must set the following options:"
                 + "\n\t-lang: language of the project to be extracted"
                 + "\n\t-d: the project path must be inserted after this option"
                 + "\n\t-n: sets the ProjectName"
@@ -42,6 +42,9 @@ public class Runner {
                     ExtractorOptions.setVxlEnabled(true);
                 } else if (args[i].equals("-txt")) {
                     ExtractorOptions.setVocabularyTxtEnabled(true);
+                } else if (args[i].equals("-help")) {
+                    System.out.println(MANUAL);
+                    System.exit(0);
                 }
             }
 

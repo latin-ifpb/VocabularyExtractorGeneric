@@ -55,6 +55,10 @@ public class FileCreator {
         FileWriter fileWriter;
         BufferedWriter writer;
 
+        if (path.charAt(path.length() - 1) == '/') {
+            path = path.substring(0, path.length() - 1);
+        }
+
         try {
             fileWriter = new FileWriter(path + "/" + fileName + "." + format);
             writer = new BufferedWriter(fileWriter);
