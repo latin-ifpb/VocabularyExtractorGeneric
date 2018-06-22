@@ -21,7 +21,7 @@ public class Runner {
                 + "\n\t-cg: generate call graph"
                 + "\n\t-vxl: generate vxl"
                 + "\n\t-txt: generate txt"
-                + "\n\n\tEXAMPLE: -lang Java -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
+                + "\n\n\tEXAMPLE: -lang Java,C,CSharp -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
                 "-cg -vxl -txt";
 
         try {
@@ -48,7 +48,7 @@ public class Runner {
                 }
             }
 
-            extractorInit.extractVocabulary(languageOption, projectName, projectPath, filePath, projectRevision);
+            extractorInit.extractVocabulary(languageOption.split(","), projectName, projectPath, filePath, projectRevision);
         } catch (IndexOutOfBoundsException e) {
             System.out.println(MANUAL);
         }
