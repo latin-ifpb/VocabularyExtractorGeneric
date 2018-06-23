@@ -1,12 +1,12 @@
-package org.bluebird.Extractor.CSharp;
+package org.bluebird.Extractor.Languages.Java;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.bluebird.Extractor.LanguageWalker;
-import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
-import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
+import org.bluebird.LanguagesUtil.Java.JavaLexer;
+import org.bluebird.LanguagesUtil.Java.JavaParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,21 +14,22 @@ import java.nio.charset.Charset;
 
 import static org.bluebird.FileUtils.FileBrowser.readFile;
 
-public class CSharpWalker implements LanguageWalker {
+public class JavaWalker implements LanguageWalker {
 
     /**
      * Pecorre a arvore gerada do codigo fonte
      * @param file Arquivo a ser pecorrido
      * @throws IOException Erro de leitura do arquivo
      */
+    @Override
     public void walkFileTree(File file) throws IOException {
         String code = readFile(file, Charset.forName("UTF-8"));
-        CSharpLexer lexer = new CSharpLexer(new ANTLRInputStream(code));
+        JavaLexer lexer = new JavaLexer(new ANTLRInputStream(code));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        CSharpParser parser = new CSharpParser(tokens);
-        ParserRuleContext tree = parser.compilation_unit();
+        JavaParser parser = new JavaParser(tokens);
+        ParserRuleContext tree = parser.compilationUnit();
         ParseTreeWalker walker = new ParseTreeWalker();
-        CSharpListener extractor = new CSharpListener(parser, tokens);
+        JavaListener extractor = new JavaListener(parser, tokens);
         walker.walk(extractor, tree);
     }
 
@@ -38,6 +39,6 @@ public class CSharpWalker implements LanguageWalker {
      */
     @Override
     public String languageFormat() {
-        return "cs";
+        return "java";
     }
 }

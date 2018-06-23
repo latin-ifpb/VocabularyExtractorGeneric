@@ -1,4 +1,4 @@
-package org.bluebird.Extractor.CSharp;
+package org.bluebird.Extractor.Languages.CSharp;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.TokenStream;

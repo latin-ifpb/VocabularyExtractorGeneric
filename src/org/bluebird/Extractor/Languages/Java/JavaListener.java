@@ -1,4 +1,4 @@
-package org.bluebird.Extractor.Java;
+package org.bluebird.Extractor.Languages.Java;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.TokenStream;

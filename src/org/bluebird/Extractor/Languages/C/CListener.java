@@ -1,4 +1,4 @@
-package org.bluebird.Extractor.C;
+package org.bluebird.Extractor.Languages.C;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.TokenStream;

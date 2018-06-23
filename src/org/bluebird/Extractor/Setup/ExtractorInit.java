@@ -21,7 +21,7 @@ public class ExtractorInit {
      */
     private LanguageWalker returnWalkerObject(String language) {
         try {
-            Class walker = Class.forName("org.bluebird.Extractor." + language + "." + language + "Walker");
+            Class walker = Class.forName("org.bluebird.Extractor.Languages." + language + "." + language + "Walker");
             return (LanguageWalker) walker.newInstance();
         } catch (ReflectiveOperationException e) {
             return null;

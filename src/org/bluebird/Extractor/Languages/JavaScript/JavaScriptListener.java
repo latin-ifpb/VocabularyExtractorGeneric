@@ -1,4 +1,4 @@
-package org.bluebird.Extractor.JavaScript;
+package org.bluebird.Extractor.Languages.JavaScript;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.TokenStream;
