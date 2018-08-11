@@ -23,7 +23,6 @@ public class Runner {
                 + "\n\t-txt: generate txt"
                 + "\n\n\tEXAMPLE: -lang Java,C,CSharp -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
                 "-cg -vxl -txt";
-
         try {
             for(int i = 0; i < args.length; i++) {
                 if (args[i].equals("-lang")) {

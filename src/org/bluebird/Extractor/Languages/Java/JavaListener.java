@@ -18,6 +18,7 @@ public class JavaListener extends JavaParserBaseListener {
     private String modifiersClassOrInterface = "default";
     private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
+    private String pack;
 
     JavaListener(JavaParser parser, BufferedTokenStream tokenStream) {
         this.tokens = parser.getTokenStream();
@@ -49,6 +50,8 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterPackageDeclaration(JavaParser.PackageDeclarationContext ctx) {
         String packageIdentifier = this.tokens.getText(ctx.qualifiedName());
         ruleIndex.push(ctx.getStart().getLine());
+        packageIdentifier = packageIdentifier.replace(".","/");
+        this.pack = packageIdentifier;
         FileCreator.appendToVxlFile("\t<pack name=\""+packageIdentifier+"\">\n");
     }
     public void exitPackageDeclaration(JavaParser.PackageDeclarationContext ctx) {
@@ -72,7 +75,7 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
         TerminalNode classIdentifier = ctx.IDENTIFIER();
         ruleIndex.push(ctx.getStart().getLine());
-        FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\">\n");
+        FileCreator.appendToVxlFile("\t\t<class name=\"" +pack+"\""+ classIdentifier +".java\""+ " intfc=\"n\"" +"\" acess=\"" + this.modifiersClassOrInterface + "\"> sloc=\n");
         //System.out.println(this.modifiersClassOrInterface + " " + ctx.CLASS() + " " + classIdentifier);
         this.modifiersClassOrInterface = "default";
     }
@@ -95,7 +98,7 @@ public class JavaListener extends JavaParserBaseListener {
         TerminalNode methodIdentifier = ctx.IDENTIFIER();
         String methodParamenters = this.tokens.getText(ctx.formalParameters());
         String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid());
-        FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + methodParamenters + "\" type=\"" + typeMethod + "\"acess=\"" +
+        FileCreator.appendToVxlFile("\t\t\t<mth name=\"" +pack+"\""+ methodIdentifier + methodParamenters + "\" type=\"" + typeMethod + "\"acess=\"" +
                 this.modifiers + "\">\n");
         //System.out.println("\t" + this.modifiers + " "+ typeMethod + " " + methodIdentifier + " " + methodParamenters);
         this.modifiers = "default";
@@ -117,16 +120,34 @@ public class JavaListener extends JavaParserBaseListener {
         String fieldIdentifier =  this.tokens.getText(ctx.variableDeclarators().variableDeclarator(0).variableDeclaratorId().getSourceInterval());
         String typeField = this.tokens.getText(ctx.typeType());
         //System.out.println("\t" + this.modifiers + " "+ typeField + " " + fieldIdentifier);
-        FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\"type=\""+ typeField + "\" acess=\"" + this.modifiers + "\" >\n");
+        if (verificaConstante(fieldIdentifier) == false){
+            FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\"type=\""+ typeField + "\" acess=\"" + this.modifiers + "\" >\n");
+        }else{
+            FileCreator.appendToVxlFile("\t\t\t<const name=\""+fieldIdentifier+"\"type=\""+ typeField + "\" acess=\"" + this.modifiers + "\" >\n");
+        }
         this.modifiers = "default";
+    }
+
+    public boolean verificaConstante(String constante) {
+        if (constante.toUpperCase().equals(constante)) {
+            return true;
+        } else {
+            return false;
+        }
     }
     /**
      * Associa comentarios aos atributos
      * @param ctx Entidade da Parser Tree
      */
     public void exitFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
+        String fieldIdentifier =  this.tokens.getText(ctx.variableDeclarators().variableDeclarator(0).variableDeclaratorId().getSourceInterval());
+
         commentsExtractor.associateComments(ctx);
-        FileCreator.appendToVxlFile("\t\t\t</field>\n");
+        if (verificaConstante(fieldIdentifier) == false){
+            FileCreator.appendToVxlFile("\t\t\t</field>\n");
+        }else{
+            FileCreator.appendToVxlFile("\t\t\t</const>\n");
+        }
     }
     /**
      * Extrai os construtores e seus respectivos parametros
@@ -168,8 +189,8 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         TerminalNode interfaceIdentifier = ctx.IDENTIFIER();
         //System.out.println(this.modifiersClassOrInterface + " " + ctx.INTERFACE() + " " + interfaceIdentifier);
-        FileCreator.appendToVxlFile("\t\t\t<intfc name=\"" + interfaceIdentifier +
-                "\" acess=\"" + this.modifiersClassOrInterface + "\">\n");
+        FileCreator.appendToVxlFile("\t\t\t<intfc name=\""+pack+"\"" + interfaceIdentifier +
+                ".java"+"\" acess=\"" + this.modifiersClassOrInterface + "\">\n");
         this.modifiersClassOrInterface = "default";
     }
     /**
