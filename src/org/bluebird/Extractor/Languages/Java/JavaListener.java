@@ -5,9 +5,9 @@ import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.FileUtils.FileCreator;
-import org.bluebird.LanguagesUtil.Java.JavaLexer;
-import org.bluebird.LanguagesUtil.Java.JavaParser;
-import org.bluebird.LanguagesUtil.Java.JavaParserBaseListener;
+import org.bluebird.LanguagesUtils.Java.JavaLexer;
+import org.bluebird.LanguagesUtils.Java.JavaParser;
+import org.bluebird.LanguagesUtils.Java.JavaParserBaseListener;
 
 import java.util.Stack;
 

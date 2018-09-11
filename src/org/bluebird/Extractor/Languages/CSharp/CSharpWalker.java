@@ -5,8 +5,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.bluebird.Extractor.LanguageWalker;
-import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
-import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
+import org.bluebird.LanguagesUtils.CSharp.CSharpLexer;
+import org.bluebird.LanguagesUtils.CSharp.CSharpParser;
 
 import java.io.File;
 import java.io.IOException;

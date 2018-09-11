@@ -7,9 +7,9 @@ import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.Extractor.Setup.ExtractorOptions;
 import org.bluebird.FileUtils.FileCreator;
-import org.bluebird.LanguagesUtil.JavaScript.JavaScriptLexer;
-import org.bluebird.LanguagesUtil.JavaScript.JavaScriptParser;
-import org.bluebird.LanguagesUtil.JavaScript.JavaScriptParserBaseListener;
+import org.bluebird.LanguagesUtils.JavaScript.JavaScriptLexer;
+import org.bluebird.LanguagesUtils.JavaScript.JavaScriptParser;
+import org.bluebird.LanguagesUtils.JavaScript.JavaScriptParserBaseListener;
 
 import java.util.Stack;
 
@@ -20,6 +20,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
     private String funcaoAtual = null;
     private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
+    private boolean methodExists = false;
 
     /**
      * Construtor do Listener da Linguagem JS
@@ -140,4 +141,49 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
         }
     }
 
+    /**
+     * Extrai o metodo
+     *
+     * @param ctx Entidade da Parser Tree
+     */
+    @Override
+    public void enterMethodDefinition(JavaScriptParser.MethodDefinitionContext ctx) {
+        String methodIdentifier;
+
+        try {
+            methodIdentifier = this.tokens.getText(ctx.propertyName());
+
+            if (ExtractorOptions.isVocabularyTxtEnabled()) {
+                FileCreator.appendToVocabularyTxtFile("method " + methodIdentifier + "\n");
+            }
+
+            if (ExtractorOptions.isVxlEnabled()) {
+                ruleIndex.push(ctx.getStart().getLine());
+
+                FileCreator.appendToVxlFile("\t<mth name=\"" + methodIdentifier + "\" >\n");
+            }
+
+            this.methodExists = true;
+        } catch (NullPointerException e) {
+
+        }
+    }
+
+    /**
+     * Associa os comentarios ao metodo
+     *
+     * @param ctx Entidade da Parser Tree
+     */
+    @Override
+    public void exitMethodDefinition(JavaScriptParser.MethodDefinitionContext ctx) {
+        if(this.methodExists) {
+            if (ExtractorOptions.isVxlEnabled()) {
+                commentsExtractor.associateComments(ctx);
+                ruleIndex.pop();
+                FileCreator.appendToVxlFile("\t</mth>\n");
+            }
+
+            this.methodExists = false;
+        }
+    }
 }

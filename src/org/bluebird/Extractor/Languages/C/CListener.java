@@ -8,8 +8,8 @@ import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.Extractor.Setup.ExtractorOptions;
 import org.bluebird.FileUtils.FileBrowser;
 import org.bluebird.FileUtils.FileCreator;
-import org.bluebird.LanguagesUtil.C.CBaseListener;
-import org.bluebird.LanguagesUtil.C.CParser;
+import org.bluebird.LanguagesUtils.C.CBaseListener;
+import org.bluebird.LanguagesUtils.C.CParser;
 
 import java.util.Stack;
 import java.util.regex.Matcher;

@@ -21,6 +21,7 @@ public class Runner {
                 + "\n\t-cg: generate call graph"
                 + "\n\t-vxl: generate vxl"
                 + "\n\t-txt: generate txt"
+                + "\n\t-stat: show memory used"
                 + "\n\n\tEXAMPLE: -lang Java,C,CSharp -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
                 "-cg -vxl -txt";
         try {
@@ -41,6 +42,8 @@ public class Runner {
                     ExtractorOptions.setVxlEnabled(true);
                 } else if (args[i].equals("-txt")) {
                     ExtractorOptions.setVocabularyTxtEnabled(true);
+                } else if (args[i].equals("-stat")) {
+                    ExtractorOptions.setMemoryRuntimeEnabled(true);
                 } else if (args[i].equals("-help")) {
                     System.out.println(MANUAL);
                     System.exit(0);

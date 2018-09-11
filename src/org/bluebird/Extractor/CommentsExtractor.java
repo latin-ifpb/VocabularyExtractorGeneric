@@ -50,7 +50,7 @@ public class CommentsExtractor {
         for (int i = ctx.getStart().getLine(); i <= ctx.getStop().getLine(); i++) {
             String cmt = this.comments.get(i);
             if (cmt != null) {
-                FileCreator.appendToVxlFile("\t\t\t<jdoc=\t\t\t\"" + cmt + "\"\n");
+                FileCreator.appendToVxlFile("\t\t\t<cmmt descr=\"" + cmt + "\"></cmmt>\n");
                 this.comments.remove(i);
             }
         }
@@ -65,7 +65,7 @@ public class CommentsExtractor {
         for (int i = index; i < ctx.getStop().getLine(); i++) {
             String cmt = this.comments.get(i);
             if (cmt != null) {
-                FileCreator.appendToVxlFile("\t\t\t<jdoc=\"" + cmt + "\">\n");
+                FileCreator.appendToVxlFile("\t\t\t<cmmt descr=\"" + cmt + "\"></cmmt>\n");
                 this.comments.remove(i);
             }
         }

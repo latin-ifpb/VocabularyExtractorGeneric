@@ -4,7 +4,8 @@ public class ExtractorOptions {
 
     private static boolean callGraphEnabled;
     private static boolean vxlEnabled;
-    private static boolean VocabularyTxtEnabled;
+    private static boolean vocabularyTxtEnabled;
+    private static boolean memoryRuntimeEnabled;
 
     /**
      * Verifica se a opção de gerar Call Graph foi marcada
@@ -43,7 +44,7 @@ public class ExtractorOptions {
      * @return Boolean da opção do txt do vocabulario
      */
     public static boolean isVocabularyTxtEnabled() {
-        return ExtractorOptions.VocabularyTxtEnabled;
+        return ExtractorOptions.vocabularyTxtEnabled;
     }
 
     /**
@@ -51,6 +52,22 @@ public class ExtractorOptions {
      * @param vocabularyTxtEnabled True ou False para gerar o txt do vocabulario
      */
     public static void setVocabularyTxtEnabled(boolean vocabularyTxtEnabled) {
-        ExtractorOptions.VocabularyTxtEnabled = vocabularyTxtEnabled;
+        ExtractorOptions.vocabularyTxtEnabled = vocabularyTxtEnabled;
+    }
+
+    /**
+     * Verifica se a opção de gerar dados de runtime foi marcada
+     * @return Boolean da opção do memoryRuntime
+     */
+    public static boolean isMemoryRuntimeEnabled() {
+        return ExtractorOptions.memoryRuntimeEnabled;
+    }
+
+    /**
+     * Seta a opção de gerar dados de runtime
+     * @param memoryRuntimeEnabled True ou False para os dados de runtime
+     */
+    public static void setMemoryRuntimeEnabled(boolean memoryRuntimeEnabled) {
+        ExtractorOptions.memoryRuntimeEnabled = memoryRuntimeEnabled;
     }
 }

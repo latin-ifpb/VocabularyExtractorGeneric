@@ -6,9 +6,9 @@ import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.Extractor.Setup.ExtractorOptions;
 import org.bluebird.FileUtils.FileCreator;
-import org.bluebird.LanguagesUtil.CSharp.CSharpLexer;
-import org.bluebird.LanguagesUtil.CSharp.CSharpParser;
-import org.bluebird.LanguagesUtil.CSharp.CSharpParserBaseListener;
+import org.bluebird.LanguagesUtils.CSharp.CSharpLexer;
+import org.bluebird.LanguagesUtils.CSharp.CSharpParser;
+import org.bluebird.LanguagesUtils.CSharp.CSharpParserBaseListener;
 
 import java.util.Stack;
 
@@ -400,6 +400,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         String enumIdentifier = this.tokens.getText(ctx.identifier());
+        String enumVariable;
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("enum " + enumIdentifier + "\n");
@@ -407,6 +408,10 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            for(CSharpParser.Enum_member_declarationContext variable : ctx.enum_body().enum_member_declaration()) {
+                enumVariable = this.tokens.getText(variable.identifier());
+                FileCreator.appendToVxlFile("\t\t\t\t<lvar name=\"" + enumVariable + "\"></lvar>\n");
+            }
             this.modifiers = "default";
         }
     }
