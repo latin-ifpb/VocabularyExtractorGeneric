@@ -176,7 +176,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
      */
     @Override
     public void exitMethodDefinition(JavaScriptParser.MethodDefinitionContext ctx) {
-        if(this.methodExists) {
+        if (this.methodExists) {
             if (ExtractorOptions.isVxlEnabled()) {
                 commentsExtractor.associateComments(ctx);
                 ruleIndex.pop();

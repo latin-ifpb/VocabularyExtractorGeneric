@@ -7,6 +7,7 @@ public interface LanguageWalker {
 
     /**
      * Pecorre a arvore gerada do codigo fonte
+     *
      * @param file Arquivo a ser pecorrido
      * @throws IOException Erro de leitura do arquivo
      */
@@ -14,6 +15,7 @@ public interface LanguageWalker {
 
     /**
      * Diz qual formato de arquivo da linguagem
+     *
      * @return Formato do arquivo
      */
     String languageFormat();

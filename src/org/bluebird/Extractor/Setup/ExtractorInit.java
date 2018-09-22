@@ -40,16 +40,15 @@ public class ExtractorInit {
      * @param fileToSavePath Caminho para salvar vxl
      */
     public void extractVocabulary(String[] languageOption, String projectName, String dirPath, String fileToSavePath, String revision) {
-        long start = System.currentTimeMillis(), elapsedTimeMillis;
-        float elapsedTimeSec;
+        long start = System.currentTimeMillis(), elapsedTimeMillis, elapsedTimeSec;
 
-        if(ExtractorOptions.isMemoryRuntimeEnabled()) {
+        if (ExtractorOptions.isMemoryRuntimeEnabled()) {
             memoryRuntime = new MemoryRuntime();
         }
 
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                            + "<project name=\"" + projectName + "\" revision=\"" + revision + "\">\n");
+                    + "<project name=\"" + projectName + "\" revision=\"" + revision + "\">\n");
 
         }
 
@@ -94,7 +93,7 @@ public class ExtractorInit {
         if (ExtractorOptions.isMemoryRuntimeEnabled()) {
             memoryRuntime.calculateAll();
             elapsedTimeMillis = System.currentTimeMillis() - start;
-            elapsedTimeSec = elapsedTimeMillis/1000;
+            elapsedTimeSec = elapsedTimeMillis / 1000;
             System.out.println("Tempo em Milisegundos: " + elapsedTimeMillis + "\nTempo em Segundos: " + elapsedTimeSec);
         }
     }

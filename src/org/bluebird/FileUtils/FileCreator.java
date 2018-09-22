@@ -14,6 +14,7 @@ public class FileCreator {
 
     /**
      * Retorna o string do vocabulario do txt
+     *
      * @return String do txt do vocabulario
      */
     public static StringBuffer getVocabularyTxtFile() {
@@ -22,6 +23,7 @@ public class FileCreator {
 
     /**
      * Retorna o string do grafo
+     *
      * @return String do grafo
      */
     public static StringBuffer getGraphDotFile() {
@@ -30,6 +32,7 @@ public class FileCreator {
 
     /**
      * Retorna o string do vxl
+     *
      * @return String do vxl
      */
     public static StringBuffer getVxlFile() {
@@ -38,6 +41,7 @@ public class FileCreator {
 
     /**
      * Retorna o string da analise do grafo
+     *
      * @return String do txt do grafo
      */
     public static StringBuffer getGraphTxtFile() {
@@ -46,10 +50,11 @@ public class FileCreator {
 
     /**
      * Salva um arquivo
+     *
      * @param fileName Nome do arquivo
-     * @param path Caminho do arquivo
-     * @param type String do arquivo para processar
-     * @param format Formato do arquivo
+     * @param path     Caminho do arquivo
+     * @param type     String do arquivo para processar
+     * @param format   Formato do arquivo
      */
     public static void saveFile(String fileName, String path, StringBuffer type, String format) {
         FileWriter fileWriter;
@@ -78,6 +83,7 @@ public class FileCreator {
 
     /**
      * Adiciona a string ao vxl
+     *
      * @param content Conteudo para adicionar
      */
     public static void appendToVxlFile(String content) {
@@ -86,6 +92,7 @@ public class FileCreator {
 
     /**
      * Adiciona a string ao dot do grafo
+     *
      * @param content Conteudo para adicionar
      */
     public static void appendToGraphDotFile(String content) {
@@ -94,6 +101,7 @@ public class FileCreator {
 
     /**
      * Adiciona a string ao txt do grafo
+     *
      * @param content Conteudo para adicionar
      */
     public static void appendToGraphTxtFile(String content) {
@@ -102,6 +110,7 @@ public class FileCreator {
 
     /**
      * Adiciona a string ao txt do vocabulario
+     *
      * @param content Conteudo para adicionar
      */
     public static void appendToVocabularyTxtFile(String content) {

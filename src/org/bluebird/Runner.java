@@ -7,6 +7,7 @@ public class Runner {
 
     /**
      * Classe principal do projeto
+     *
      * @param args Deve ter a lista de argumentos para o extrator
      */
     public static void main(String[] args) {
@@ -25,28 +26,45 @@ public class Runner {
                 + "\n\n\tEXAMPLE: -lang Java,C,CSharp -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
                 "-cg -vxl -txt";
         try {
-            for(int i = 0; i < args.length; i++) {
-                if (args[i].equals("-lang")) {
-                    languageOption = args[++i];
-                } else if (args[i].equals("-d")) {
-                    projectPath = args[++i];
-                } else if (args[i].equals("-n")) {
-                    projectName = args[++i];
-                } else if (args[i].equals("-r")) {
-                    projectRevision = args[++i];
-                } else if (args[i].equals("-f")) {
-                    filePath = args[++i];
-                } else if (args[i].equals("-cg")) {
-                    ExtractorOptions.setCallGraphEnabled(true);
-                } else if (args[i].equals("-vxl")) {
-                    ExtractorOptions.setVxlEnabled(true);
-                } else if (args[i].equals("-txt")) {
-                    ExtractorOptions.setVocabularyTxtEnabled(true);
-                } else if (args[i].equals("-stat")) {
-                    ExtractorOptions.setMemoryRuntimeEnabled(true);
-                } else if (args[i].equals("-help")) {
-                    System.out.println(MANUAL);
-                    System.exit(0);
+            if (args.length == 0) {
+                System.out.println(MANUAL);
+                System.exit(0);
+            }
+
+            for (int i = 0; i < args.length; i++) {
+                switch (args[i]) {
+                    case "-lang":
+                        languageOption = args[++i];
+                        break;
+                    case "-d":
+                        projectPath = args[++i];
+                        break;
+                    case "-n":
+                        projectName = args[++i];
+                        break;
+                    case "-r":
+                        projectRevision = args[++i];
+                        break;
+                    case "-f":
+                        filePath = args[++i];
+                        break;
+                    case "-cg":
+                        ExtractorOptions.setCallGraphEnabled(true);
+                        break;
+                    case "-vxl":
+                        ExtractorOptions.setVxlEnabled(true);
+                        break;
+                    case "-txt":
+                        ExtractorOptions.setVocabularyTxtEnabled(true);
+                        break;
+                    case "-stat":
+                        ExtractorOptions.setMemoryRuntimeEnabled(true);
+                        break;
+                    case "-help":
+                    default:
+                        System.out.println(MANUAL);
+                        System.exit(0);
+                        break;
                 }
             }
 

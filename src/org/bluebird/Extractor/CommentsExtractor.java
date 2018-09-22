@@ -15,6 +15,7 @@ public class CommentsExtractor {
 
     /**
      * Inicializa o hashmap que relaciona comentarios com linha do codigo
+     *
      * @param commentsStream Token Stream do codigo fonte
      */
     public CommentsExtractor(BufferedTokenStream commentsStream) {
@@ -24,7 +25,8 @@ public class CommentsExtractor {
 
     /**
      * Extrai todos comentarios do arquivo
-     * @param ctx Entidade
+     *
+     * @param ctx     Entidade
      * @param channel Canal dos comentarios
      */
     public void getAllComments(ParserRuleContext ctx, int channel) {
@@ -44,6 +46,7 @@ public class CommentsExtractor {
 
     /**
      * Associa o comentario a entidade
+     *
      * @param ctx Entidade
      */
     public void associateComments(ParserRuleContext ctx) {
@@ -58,8 +61,9 @@ public class CommentsExtractor {
 
     /**
      * Associa o comentario a entidade
+     *
      * @param index Linha inicial
-     * @param ctx Entidade
+     * @param ctx   Entidade
      */
     public void associateComments(int index, ParserRuleContext ctx) {
         for (int i = index; i < ctx.getStop().getLine(); i++) {

@@ -15,6 +15,7 @@ public class CallGraph {
 
     /**
      * Adiciona aresta ligando duas entidades no grafo
+     *
      * @param source Vertice fonte
      * @param target Vertice alvo
      */
@@ -24,6 +25,7 @@ public class CallGraph {
 
     /**
      * Adiciona entidade como vertice no grafo
+     *
      * @param node Vertice
      */
     public void setNodes(String node) {
@@ -44,7 +46,7 @@ public class CallGraph {
             }
         }
 
-        for(String node : CallGraph.nodes) {
+        for (String node : CallGraph.nodes) {
             if (!calledMth.contains(node) && !(node.toLowerCase().equals("main"))) {
                 CallGraph.notCalledMth.add(node);
             }
@@ -58,7 +60,7 @@ public class CallGraph {
         FileCreator.appendToGraphDotFile("digraph G{\n");
 
         for (String node : nodes) {
-            FileCreator.appendToGraphDotFile("\t"+ node + ";\n");
+            FileCreator.appendToGraphDotFile("\t" + node + ";\n");
         }
 
         for (String src : edges.keySet()) {

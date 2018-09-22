@@ -13,6 +13,7 @@ public class FileBrowser {
 
     /**
      * Retorna o nome do arquivo
+     *
      * @return Nome do arquivo
      */
     public static String getActualFile() {
@@ -21,7 +22,8 @@ public class FileBrowser {
 
     /**
      * Le um arquivo qualquer
-     * @param file Arquivo para ler
+     *
+     * @param file     Arquivo para ler
      * @param encoding Encoding desejado
      * @return O string do arquivo
      * @throws IOException Erro de leitura de arquivo
@@ -33,7 +35,8 @@ public class FileBrowser {
 
     /**
      * Pecorre o diretorio procurando por arquivos no formato desejado
-     * @param walker Walker da linguagem que vai ser utilizado
+     *
+     * @param walker    Walker da linguagem que vai ser utilizado
      * @param directory Diretorio que deseja pecorrer
      * @throws IOException Erro de leitura de arquivo
      */

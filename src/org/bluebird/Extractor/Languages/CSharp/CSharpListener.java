@@ -24,7 +24,8 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Construtor do Listener da Linguagem C#
-     * @param parser Parser do C#
+     *
+     * @param parser      Parser do C#
      * @param tokenStream Token Stream do Arquivo C#
      */
     CSharpListener(CSharpParser parser, BufferedTokenStream tokenStream) {
@@ -36,6 +37,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai os tipos dos argumentos dos metodos
+     *
      * @param ctx Entidade da Parser Tree
      */
     private void returnArgsType(CSharpParser.Fixed_parametersContext ctx) {
@@ -56,6 +58,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Inicia a extração do arquivo C# e pega todos comentarios do arquivo
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -68,6 +71,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Termina a extração do arquivo C#
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -79,6 +83,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai o namespace
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -97,6 +102,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios ao namespace
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -110,6 +116,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai a classe
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -129,6 +136,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios a classe
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -142,6 +150,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai o metodo
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -152,12 +161,12 @@ public class CSharpListener extends CSharpParserBaseListener {
             FileCreator.appendToVocabularyTxtFile("method " + methodIdentifier + "\n");
         }
 
-        if(ExtractorOptions.isCallGraphEnabled()) {
+        if (ExtractorOptions.isCallGraphEnabled()) {
             this.funcaoAtual = methodIdentifier;
             callGraph.setNodes(methodIdentifier);
         }
 
-        if(ExtractorOptions.isVxlEnabled()) {
+        if (ExtractorOptions.isVxlEnabled()) {
             try {
                 returnArgsType(ctx.formal_parameter_list().fixed_parameters());
             } catch (NullPointerException e) {
@@ -172,6 +181,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios aos metodos
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -185,6 +195,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai o atributo
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -207,6 +218,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios aos atributos
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -219,6 +231,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai o constructor
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -244,6 +257,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios ao constructor
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -256,13 +270,14 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai os modificadores de atributos e metodos da classe
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
     public void enterAll_member_modifiers(CSharpParser.All_member_modifiersContext ctx) {
         String temp;
 
-        for( int i = 0; i < ctx.all_member_modifier().size(); i++) {
+        for (int i = 0; i < ctx.all_member_modifier().size(); i++) {
             temp = this.tokens.getText(ctx.all_member_modifier(i));
 
             if (temp.equals("private") || temp.equals("public") || (temp.equals("protected"))) {
@@ -273,6 +288,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai os getters e setters
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -283,7 +299,7 @@ public class CSharpListener extends CSharpParserBaseListener {
             FileCreator.appendToVocabularyTxtFile("property " + propertyIdentifier + "\n");
         }
 
-        if(ExtractorOptions.isCallGraphEnabled()) {
+        if (ExtractorOptions.isCallGraphEnabled()) {
             this.funcaoAtual = propertyIdentifier;
             callGraph.setNodes(propertyIdentifier);
         }
@@ -296,6 +312,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios aos propertys
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -309,6 +326,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai os identifiers dos argumentos dos metodos
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -329,6 +347,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai a variavel local do metodo
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -350,6 +369,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai acesso a membros
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -365,6 +385,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai o struct
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -383,6 +404,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Associa comentarios ao struct
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -395,6 +417,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai o enum
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -408,7 +431,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
-            for(CSharpParser.Enum_member_declarationContext variable : ctx.enum_body().enum_member_declaration()) {
+            for (CSharpParser.Enum_member_declarationContext variable : ctx.enum_body().enum_member_declaration()) {
                 enumVariable = this.tokens.getText(variable.identifier());
                 FileCreator.appendToVxlFile("\t\t\t\t<lvar name=\"" + enumVariable + "\"></lvar>\n");
             }
@@ -418,6 +441,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Fecha tag do enum
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -429,6 +453,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai a interface
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -447,6 +472,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Fecha tag da interface
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
@@ -458,13 +484,14 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     /**
      * Extrai chamadas de metodos
+     *
      * @param ctx Entidade da Parser Tree
      */
     @Override
     public void enterPrimary_expression(CSharpParser.Primary_expressionContext ctx) {
         String mth;
 
-        if(ExtractorOptions.isCallGraphEnabled()) {
+        if (ExtractorOptions.isCallGraphEnabled()) {
             for (int i = 0; i < ctx.method_invocation().size(); i++) {
 
                 try {
