@@ -74,6 +74,14 @@ public class ExtractorInit {
             }
         }
 
+        if (ExtractorOptions.isTokenExtractionEnabled()) {
+            FileCreator.saveFile(projectName + "_Comments_Tokens", fileToSavePath + "/Tokens/",
+                    FileCreator.getCommentsTokensFile(), "txt");
+
+            FileCreator.saveFile(projectName + "_Code_Tokens", fileToSavePath + "/Tokens/",
+                    FileCreator.getCodeTokensFile(), "txt");
+        }
+
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("</project>");
             FileCreator.saveFile(projectName, fileToSavePath, FileCreator.getVxlFile(), "vxl");
@@ -94,7 +102,8 @@ public class ExtractorInit {
             memoryRuntime.calculateAll();
             elapsedTimeMillis = System.currentTimeMillis() - start;
             elapsedTimeSec = elapsedTimeMillis / 1000;
-            System.out.println("Tempo em Milisegundos: " + elapsedTimeMillis + "\nTempo em Segundos: " + elapsedTimeSec);
+            FileCreator.appendToMemoryRuntimeFile("Tempo em Milisegundos: " + elapsedTimeMillis + "\nTempo em Segundos: " + elapsedTimeSec);
+            FileCreator.saveFile("Extractor_Data", fileToSavePath, FileCreator.getMemoryRuntimeFile(), "txt");
         }
     }
 }

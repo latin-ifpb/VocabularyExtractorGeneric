@@ -1,9 +1,6 @@
 package org.bluebird.FileUtils;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class FileCreator {
 
@@ -11,6 +8,18 @@ public class FileCreator {
     private static StringBuffer graphDotFile = new StringBuffer();
     private static StringBuffer graphTxtFile = new StringBuffer();
     private static StringBuffer vocabularyTxtFile = new StringBuffer();
+    private static StringBuffer memoryRuntimeFile = new StringBuffer();
+    private static StringBuffer codeTokensFile = new StringBuffer();
+    private static StringBuffer commentsTokensFile = new StringBuffer();
+
+    /**
+     * Retorna o string da perfomance do extrator
+     *
+     * @return String da perfomance do extrator
+     */
+    public static StringBuffer getMemoryRuntimeFile() {
+        return FileCreator.memoryRuntimeFile;
+    }
 
     /**
      * Retorna o string do vocabulario do txt
@@ -49,6 +58,24 @@ public class FileCreator {
     }
 
     /**
+     * Retorna o conteudo do arquivo de tokens do codigo
+     *
+     * @return String dos tokens do codigo
+     */
+    public static StringBuffer getCodeTokensFile() {
+        return FileCreator.codeTokensFile;
+    }
+
+    /**
+     * Retorna o conteudo do arquivo de tokens dos comentarios
+     *
+     * @return String dos tokens dos comentarios
+     */
+    public static StringBuffer getCommentsTokensFile() {
+        return FileCreator.commentsTokensFile;
+    }
+
+    /**
      * Salva um arquivo
      *
      * @param fileName Nome do arquivo
@@ -59,9 +86,15 @@ public class FileCreator {
     public static void saveFile(String fileName, String path, StringBuffer type, String format) {
         FileWriter fileWriter;
         BufferedWriter writer;
+        File directory;
 
         if (path.charAt(path.length() - 1) == '/') {
             path = path.substring(0, path.length() - 1);
+        }
+
+        directory = new File(path + "/");
+        if (!directory.exists()){
+            directory.mkdirs();
         }
 
         try {
@@ -82,7 +115,7 @@ public class FileCreator {
     }
 
     /**
-     * Adiciona a string ao vxl
+     * Adiciona a string ao StringBuffer do vxl (vxl)
      *
      * @param content Conteudo para adicionar
      */
@@ -91,7 +124,7 @@ public class FileCreator {
     }
 
     /**
-     * Adiciona a string ao dot do grafo
+     * Adiciona a string ao StringBuffer do grafo (dot)
      *
      * @param content Conteudo para adicionar
      */
@@ -100,7 +133,7 @@ public class FileCreator {
     }
 
     /**
-     * Adiciona a string ao txt do grafo
+     * Adiciona a string ao StringBuffer do grafo (txt)
      *
      * @param content Conteudo para adicionar
      */
@@ -109,11 +142,38 @@ public class FileCreator {
     }
 
     /**
-     * Adiciona a string ao txt do vocabulario
+     * Adiciona a string ao StringBuffer do vocabulario (txt)
      *
      * @param content Conteudo para adicionar
      */
     public static void appendToVocabularyTxtFile(String content) {
         FileCreator.vocabularyTxtFile.append(content);
+    }
+
+    /**
+     * Adiciona a string ao StringBuffer do stats (txt)
+     *
+     * @param content Conteudo para adicionar
+     */
+    public static void appendToMemoryRuntimeFile(String content) {
+        FileCreator.memoryRuntimeFile.append(content);
+    }
+
+    /**
+     * Adiciona o token ao StringBuffer de tokens do codigo
+     *
+     * @param content Conteudo para adicionar
+     */
+    public static void appendToCodeTokensFile(String content) {
+        FileCreator.codeTokensFile.append(content);
+    }
+
+    /**
+     * Adiciona o token ao StringBuffer de tokens dos comentarios
+     *
+     * @param content Conteudo para adicionar
+     */
+    public static void appendToCommentsTokensFile(String content) {
+        FileCreator.commentsTokensFile.append(content);
     }
 }

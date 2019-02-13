@@ -1,5 +1,7 @@
 package org.bluebird.Utils;
 
+import org.bluebird.FileUtils.FileCreator;
+
 public class MemoryRuntime {
 
     /**
@@ -10,15 +12,15 @@ public class MemoryRuntime {
         runtime.gc();
 
         long memory = runtime.totalMemory() - runtime.freeMemory();
-        System.out.println("Memoria utilizada em bytes: " + memory);
-        System.out.println("Memoria utilizada em megabytes: " + bytesToMegabytes(memory));
-        System.out.println("Memoria utilizada em Kbytes: " + bytesToKbytes(memory));
+        FileCreator.appendToMemoryRuntimeFile("Memoria utilizada em bytes: " + memory + "\n");
+        FileCreator.appendToMemoryRuntimeFile("Memoria utilizada em megabytes: " + bytesToMegabytes(memory) + "\n");
+        FileCreator.appendToMemoryRuntimeFile("Memoria utilizada em Kbytes: " + bytesToKbytes(memory) + "\n");
 
         memory = runtime.maxMemory();
-        System.out.println("Máximo de memória utilizada em Kbytes: " + bytesToKbytes(memory));
+        FileCreator.appendToMemoryRuntimeFile("Máximo de memória utilizada em Kbytes: " + bytesToKbytes(memory) + "\n");
 
         long processor = runtime.availableProcessors();
-        System.out.println("Número de processadores ativos: " + processor);
+        FileCreator.appendToMemoryRuntimeFile("Número de processadores ativos: " + processor + "\n");
     }
 
     /**
