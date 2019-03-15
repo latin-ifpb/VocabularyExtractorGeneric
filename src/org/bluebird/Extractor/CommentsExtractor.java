@@ -45,23 +45,6 @@ public class CommentsExtractor {
     }
 
     /**
-     * Extrai todos tokens de comentarios do arquivo
-     *
-     * @param ctx     Entidade
-     * @param channel Canal dos comentarios
-     */
-    public void splitCommentsTokens(ParserRuleContext ctx, int channel) {
-        String comment;
-
-        for (Token cmt : commentsStream.getTokens(ctx.getStart().getTokenIndex(), ctx.getStop().getTokenIndex())) {
-            if (cmt.getChannel() == channel) {
-                comment = cmt.getText();
-                FileCreator.appendToCommentsTokensFile(comment + "\n");
-            }
-        }
-    }
-
-    /**
      * Associa o comentario a entidade
      *
      * @param ctx Entidade

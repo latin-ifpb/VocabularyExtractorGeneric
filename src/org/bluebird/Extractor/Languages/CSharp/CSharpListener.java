@@ -1,8 +1,6 @@
 package org.bluebird.Extractor.Languages.CSharp;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
@@ -11,7 +9,7 @@ import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtils.CSharp.CSharpLexer;
 import org.bluebird.LanguagesUtils.CSharp.CSharpParser;
 import org.bluebird.LanguagesUtils.CSharp.CSharpParserBaseListener;
-import org.bluebird.Utils.SlocCounter;
+import org.bluebird.Utils.ClocCounter;
 
 import java.util.Stack;
 
@@ -24,7 +22,6 @@ public class CSharpListener extends CSharpParserBaseListener {
     private CallGraph callGraph;
     private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
-    private BufferedTokenStream tokenStream;
 
     /**
      * Construtor do Listener da Linguagem C#
@@ -37,22 +34,6 @@ public class CSharpListener extends CSharpParserBaseListener {
         this.callGraph = new CallGraph();
         this.commentsExtractor = new CommentsExtractor(tokenStream);
         this.ruleIndex = new Stack<>();
-        this.tokenStream = tokenStream;
-    }
-
-    /**
-     * Método para separar os tokens do código
-     *
-     * @param ctx Entidade da Parser Tree
-     */
-    private void splitCodeTokens(ParserRuleContext ctx) {
-        for (Token token : this.tokenStream.getTokens(ctx.getStart().getTokenIndex(), ctx.getStop().getTokenIndex())) {
-            if(token.getChannel() != CSharpLexer.COMMENTS_CHANNEL && token.getChannel() != CSharpLexer.HIDDEN) {
-                if(!(token.getText().equals("<EOF>"))) {
-                    FileCreator.appendToCodeTokensFile(token.getText() + "\n");
-                }
-            }
-        }
     }
 
     /**
@@ -83,11 +64,6 @@ public class CSharpListener extends CSharpParserBaseListener {
      */
     @Override
     public void enterCompilation_unit(CSharpParser.Compilation_unitContext ctx) {
-        if (ExtractorOptions.isTokenExtractionEnabled()) {
-            commentsExtractor.splitCommentsTokens(ctx, CSharpLexer.COMMENTS_CHANNEL);
-            splitCodeTokens(ctx);
-        }
-
         if (ExtractorOptions.isVxlEnabled()) {
             commentsExtractor.getAllComments(ctx, CSharpLexer.COMMENTS_CHANNEL);
             this.ruleIndex.push(1);
@@ -114,7 +90,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
-        int slocNamespace = SlocCounter.lineCount(ctx);
+        int slocNamespace = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("namespace " + namespaceIdentifier + "\n");
@@ -122,7 +98,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             ruleIndex.push(ctx.getStart().getLine());
-            FileCreator.appendToVxlFile("\t<nmspc name=\"" + namespaceIdentifier + "\" sloc=\"" + slocNamespace + "\">\n");
+            FileCreator.appendToVxlFile("\t<nmspc name=\"" + namespaceIdentifier + "\" cloc=\"" + slocNamespace + "\">\n");
         }
     }
 
@@ -148,7 +124,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
-        int slocClass = SlocCounter.lineCount(ctx);
+        int slocClass = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("class " + classIdentifier + "\n");
@@ -156,7 +132,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             ruleIndex.push(ctx.getStart().getLine());
-            FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\" sloc=\""+ slocClass + "\">\n");
+            FileCreator.appendToVxlFile("\t\t<class name=\"" + classIdentifier + "\" acess=\"" + this.modifiers + "\" cloc=\""+ slocClass + "\">\n");
             this.modifiers = "default";
         }
     }
@@ -183,7 +159,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
-        int slocMethod = SlocCounter.lineCount(ctx);
+        int slocMethod = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("method " + methodIdentifier + "\n");
@@ -202,7 +178,7 @@ public class CSharpListener extends CSharpParserBaseListener {
             }
 
             FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + "(" + this.args + ")" + "\" acess=\"" +
-                    this.modifiers + "\" sloc=\"" + slocMethod +  "\">\n");
+                    this.modifiers + "\" cloc=\"" + slocMethod +  "\">\n");
             this.modifiers = "default";
         }
     }
@@ -265,7 +241,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
-        int slocConstructor = SlocCounter.lineCount(ctx);
+        int slocConstructor = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("constructor " + constructorIdentifier + "\n");
@@ -279,7 +255,7 @@ public class CSharpListener extends CSharpParserBaseListener {
             }
 
             FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + "(" + this.args + ")" +
-                    "\" acess=\"" + this.modifiers + "\" sloc=\"" + slocConstructor + "\">\n");
+                    "\" acess=\"" + this.modifiers + "\" cloc=\"" + slocConstructor + "\">\n");
             this.modifiers = "default";
         }
     }
@@ -420,7 +396,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterStruct_definition(CSharpParser.Struct_definitionContext ctx) {
         String structIdentifier = this.tokens.getText(ctx.identifier());
-        int slocStruct = SlocCounter.lineCount(ctx);
+        int slocStruct = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("struct " + structIdentifier + "\n");
@@ -428,7 +404,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("\t\t\t<struct name=\"" + structIdentifier + "\" acess=\"" + this.modifiers +
-                    "\" sloc=\"" + slocStruct + "\">\n");
+                    "\" cloc=\"" + slocStruct + "\">\n");
             this.modifiers = "default";
         }
     }
@@ -454,7 +430,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         String enumIdentifier = this.tokens.getText(ctx.identifier()), enumVariable;
-        int slocEnum = SlocCounter.lineCount(ctx);
+        int slocEnum = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("enum " + enumIdentifier + "\n");
@@ -462,7 +438,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiers +
-                    "\" sloc=\"" + slocEnum + "\">\n");
+                    "\" cloc=\"" + slocEnum + "\">\n");
             for (CSharpParser.Enum_member_declarationContext variable : ctx.enum_body().enum_member_declaration()) {
                 enumVariable = this.tokens.getText(variable.identifier());
                 FileCreator.appendToVxlFile("\t\t\t\t<lvar name=\"" + enumVariable + "\"></lvar>\n");
@@ -491,7 +467,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterInterface_definition(CSharpParser.Interface_definitionContext ctx) {
         String interfaceIdentifier = this.tokens.getText(ctx.identifier());
-        int slocInterface = SlocCounter.lineCount(ctx);
+        int slocInterface = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("interface " + interfaceIdentifier + "\n");
@@ -499,7 +475,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("\t\t\t<intfc name=\"" + interfaceIdentifier + "\" acess=\"" +
-                    this.modifiers + "\" sloc=\"" + slocInterface + "\">\n");
+                    this.modifiers + "\" cloc=\"" + slocInterface + "\">\n");
             this.modifiers = "default";
         }
     }

@@ -74,14 +74,6 @@ public class ExtractorInit {
             }
         }
 
-        if (ExtractorOptions.isTokenExtractionEnabled()) {
-            FileCreator.saveFile(projectName + "_Comments_Tokens", fileToSavePath + "/Tokens/",
-                    FileCreator.getCommentsTokensFile(), "txt");
-
-            FileCreator.saveFile(projectName + "_Code_Tokens", fileToSavePath + "/Tokens/",
-                    FileCreator.getCodeTokensFile(), "txt");
-        }
-
         if (ExtractorOptions.isVxlEnabled()) {
             FileCreator.appendToVxlFile("</project>");
             FileCreator.saveFile(projectName, fileToSavePath, FileCreator.getVxlFile(), "vxl");

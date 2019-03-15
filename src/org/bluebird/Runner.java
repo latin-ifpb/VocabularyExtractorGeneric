@@ -23,8 +23,6 @@ public class Runner {
                 + "\n\t-vxl: generate vxl"
                 + "\n\t-txt: generate txt"
                 + "\n\t-stat: show memory used"
-                + "\n\t-token: enable token extraction for both code and comments"
-                + "\n\t-char: enable caractere extraction for both code and comments"
                 + "\n\n\tEXAMPLE: -lang Java,C,CSharp -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
                 "-cg -vxl -txt";
         try {
@@ -61,12 +59,6 @@ public class Runner {
                         break;
                     case "-stat":
                         ExtractorOptions.setMemoryRuntimeEnabled(true);
-                        break;
-                    case "-token":
-                        ExtractorOptions.setTokenExtractionEnabled(true);
-                        break;
-                    case "-char":
-                        ExtractorOptions.setCaractereExtractionEnabled(true);
                         break;
                     case "-help":
                     default:

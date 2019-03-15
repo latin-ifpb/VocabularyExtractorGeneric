@@ -9,8 +9,6 @@ public class FileCreator {
     private static StringBuffer graphTxtFile = new StringBuffer();
     private static StringBuffer vocabularyTxtFile = new StringBuffer();
     private static StringBuffer memoryRuntimeFile = new StringBuffer();
-    private static StringBuffer codeTokensFile = new StringBuffer();
-    private static StringBuffer commentsTokensFile = new StringBuffer();
 
     /**
      * Retorna o string da perfomance do extrator
@@ -55,24 +53,6 @@ public class FileCreator {
      */
     public static StringBuffer getGraphTxtFile() {
         return FileCreator.graphTxtFile;
-    }
-
-    /**
-     * Retorna o conteudo do arquivo de tokens do codigo
-     *
-     * @return String dos tokens do codigo
-     */
-    public static StringBuffer getCodeTokensFile() {
-        return FileCreator.codeTokensFile;
-    }
-
-    /**
-     * Retorna o conteudo do arquivo de tokens dos comentarios
-     *
-     * @return String dos tokens dos comentarios
-     */
-    public static StringBuffer getCommentsTokensFile() {
-        return FileCreator.commentsTokensFile;
     }
 
     /**
@@ -157,23 +137,5 @@ public class FileCreator {
      */
     public static void appendToMemoryRuntimeFile(String content) {
         FileCreator.memoryRuntimeFile.append(content);
-    }
-
-    /**
-     * Adiciona o token ao StringBuffer de tokens do codigo
-     *
-     * @param content Conteudo para adicionar
-     */
-    public static void appendToCodeTokensFile(String content) {
-        FileCreator.codeTokensFile.append(content);
-    }
-
-    /**
-     * Adiciona o token ao StringBuffer de tokens dos comentarios
-     *
-     * @param content Conteudo para adicionar
-     */
-    public static void appendToCommentsTokensFile(String content) {
-        FileCreator.commentsTokensFile.append(content);
     }
 }

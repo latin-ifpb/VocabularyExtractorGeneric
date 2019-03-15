@@ -10,6 +10,7 @@ import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtils.JavaScript.JavaScriptLexer;
 import org.bluebird.LanguagesUtils.JavaScript.JavaScriptParser;
 import org.bluebird.LanguagesUtils.JavaScript.JavaScriptParserBaseListener;
+import org.bluebird.Utils.ClocCounter;
 
 import java.util.Stack;
 
@@ -68,8 +69,8 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
     @Override
     public void enterFunctionDeclaration(JavaScriptParser.FunctionDeclarationContext ctx) {
         TerminalNode functionArg, functionIdentifier;
-
         functionIdentifier = ctx.Identifier();
+        int slocFunction = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("function " + functionIdentifier + "\n");
@@ -78,7 +79,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
         if (ExtractorOptions.isVxlEnabled()) {
             ruleIndex.push(ctx.getStart().getLine());
 
-            FileCreator.appendToVxlFile("\t<fnc name=\"" + functionIdentifier + "\" >\n");
+            FileCreator.appendToVxlFile("\t<fnc name=\"" + functionIdentifier + "\" cloc=\"" + slocFunction +">\n");
 
             if (ctx.formalParameterList() != null) {
                 for (JavaScriptParser.FormalParameterArgContext arg : ctx.formalParameterList().formalParameterArg()) {
@@ -116,6 +117,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
     @Override
     public void enterClassExpression(JavaScriptParser.ClassExpressionContext ctx) {
         TerminalNode classIdentifier = ctx.Identifier();
+        int slocClass = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("class " + classIdentifier + "\n");
@@ -123,7 +125,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
 
         if (ExtractorOptions.isVxlEnabled()) {
             ruleIndex.push(ctx.getStart().getLine());
-            FileCreator.appendToVxlFile("\t<class name=\"" + classIdentifier + "\" >\n");
+            FileCreator.appendToVxlFile("\t<class name=\"" + classIdentifier + "\" cloc=\"" + slocClass + ">\n");
         }
     }
 
@@ -149,6 +151,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
     @Override
     public void enterMethodDefinition(JavaScriptParser.MethodDefinitionContext ctx) {
         String methodIdentifier;
+        int slocMethod = ClocCounter.lineCount(ctx);
 
         try {
             methodIdentifier = this.tokens.getText(ctx.propertyName());
@@ -160,7 +163,7 @@ public class JavaScriptListener extends JavaScriptParserBaseListener {
             if (ExtractorOptions.isVxlEnabled()) {
                 ruleIndex.push(ctx.getStart().getLine());
 
-                FileCreator.appendToVxlFile("\t<mth name=\"" + methodIdentifier + "\" >\n");
+                FileCreator.appendToVxlFile("\t<mth name=\"" + methodIdentifier + "\" cloc=\"" + slocMethod + ">\n");
             }
 
             this.methodExists = true;

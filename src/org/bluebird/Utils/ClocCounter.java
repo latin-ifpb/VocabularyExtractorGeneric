@@ -2,7 +2,7 @@ package org.bluebird.Utils;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class SlocCounter {
+public class ClocCounter {
 
     /**
      * Conta a quantidade de linhas de uma entidade

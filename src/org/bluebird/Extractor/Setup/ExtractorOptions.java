@@ -6,8 +6,6 @@ public class ExtractorOptions {
     private static boolean vxlEnabled;
     private static boolean vocabularyTxtEnabled;
     private static boolean memoryRuntimeEnabled;
-    private static boolean tokenExtractionEnabled;
-    private static boolean caractereExtractionEnabled;
 
     /**
      * Verifica se a opção de gerar Call Graph foi marcada
@@ -79,41 +77,5 @@ public class ExtractorOptions {
      */
     public static void setMemoryRuntimeEnabled(boolean memoryRuntimeEnabled) {
         ExtractorOptions.memoryRuntimeEnabled = memoryRuntimeEnabled;
-    }
-
-    /**
-     * Verifica se a opção de extrair os tokens foi marcada
-     *
-     * @return Boolean da opção de extração dos tokens
-     */
-    public static boolean isTokenExtractionEnabled() {
-        return ExtractorOptions.tokenExtractionEnabled;
-    }
-
-    /**
-     * Seta a opção de extrair tokens do código
-     *
-     * @param tokenExtractionEnabled True ou False para a extração de tokens
-     */
-    public static void setTokenExtractionEnabled(boolean tokenExtractionEnabled) {
-        ExtractorOptions.tokenExtractionEnabled = tokenExtractionEnabled;
-    }
-
-    /**
-     * Verifica se a opção de extrair os caracteres foi marcada
-     *
-     * @return Boolean da opção de extração dos caracteres
-     */
-    public static boolean isCaractereExtractionEnabledd() {
-        return ExtractorOptions.caractereExtractionEnabled;
-    }
-
-    /**
-     * Seta a opção de extrair caracteres do código
-     *
-     * @param caractereExtractionEnabled True ou False para a extração de caracteres
-     */
-    public static void setCaractereExtractionEnabled(boolean caractereExtractionEnabled) {
-        ExtractorOptions.caractereExtractionEnabled = caractereExtractionEnabled;
     }
 }
