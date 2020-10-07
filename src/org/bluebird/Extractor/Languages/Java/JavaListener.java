@@ -1,14 +1,20 @@
 package org.bluebird.Extractor.Languages.Java;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bluebird.Extractor.CommentsExtractor;
 import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtils.Java.JavaLexer;
 import org.bluebird.LanguagesUtils.Java.JavaParser;
 import org.bluebird.LanguagesUtils.Java.JavaParserBaseListener;
+import org.bluebird.Utils.ClocCounter;
 
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class JavaListener extends JavaParserBaseListener {
@@ -19,6 +25,7 @@ public class JavaListener extends JavaParserBaseListener {
     private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
     private String pack;
+    private int lineCount;
 
     JavaListener(JavaParser parser, BufferedTokenStream tokenStream) {
         this.tokens = parser.getTokenStream();
@@ -109,6 +116,7 @@ public class JavaListener extends JavaParserBaseListener {
      */
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
+        lineCount = ClocCounter.lineCount(ctx);
         TerminalNode methodIdentifier = ctx.IDENTIFIER();
         String methodParamenters = this.tokens.getText(ctx.formalParameters());
         String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid());
@@ -119,7 +127,7 @@ public class JavaListener extends JavaParserBaseListener {
         typeMethod = typeMethod.replace(">", "&gt;");
 
         FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + methodParamenters + "\" type=\"" + typeMethod + "\" acess=\"" +
-                this.modifiers + "\">\n");
+                this.modifiers + "\" loc=\"" + lineCount + "\">\n");
 
         this.modifiers = "default";
     }
@@ -141,6 +149,7 @@ public class JavaListener extends JavaParserBaseListener {
      */
     @Override
     public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
+        lineCount = ClocCounter.lineCount(ctx);
         String fieldIdentifier = this.tokens.getText(ctx.variableDeclarators().variableDeclarator(0).variableDeclaratorId().getSourceInterval());
         String typeField = this.tokens.getText(ctx.typeType());
 
@@ -148,9 +157,9 @@ public class JavaListener extends JavaParserBaseListener {
         typeField = typeField.replace(">", "&gt;");
 
         if (verificaConstante(fieldIdentifier) == false) {
-            FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" type=\"" + typeField + "\" acess=\"" + this.modifiers + "\" ></field>\n");
+            FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" type=\"" + typeField + "\" acess=\"" + this.modifiers + "\" loc=\"" + lineCount + "\" ></field>\n");
         } else {
-            FileCreator.appendToVxlFile("\t\t\t<const name=\"" + fieldIdentifier + "\" type=\"" + typeField + "\" acess=\"" + this.modifiers + "\" ></const>\n");
+            FileCreator.appendToVxlFile("\t\t\t<const name=\"" + fieldIdentifier + "\" type=\"" + typeField + "\" acess=\"" + this.modifiers + "\" loc=\"" + lineCount +  "\" ></const>\n");
         }
         this.modifiers = "default";
     }
@@ -196,11 +205,29 @@ public class JavaListener extends JavaParserBaseListener {
      * @param ctx Entidade da Parser Tree
      */
     public void enterEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
+        lineCount = ClocCounter.lineCount(ctx);
         TerminalNode enumIdentifier = ctx.IDENTIFIER();
 
-        FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\"></enum>\n");
+        FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\" loc=\"" + lineCount +  "\">\n");
+        constEnum(ctx);
         this.modifiersClassOrInterface = "default";
+    }
 
+    public void constEnum (JavaParser.EnumDeclarationContext ctx) {
+        String constEnum = this.tokens.getText(ctx.enumConstants());
+        String constantes[] = constEnum.split(",");
+
+
+        for (int i = 0; i < constantes.length; i++) {
+            String temp = constantes[i].strip();
+            FileCreator.appendToVxlFile("\t\t\t<const name=\"" + temp + "\"></const>\n");
+        }
+    }
+
+
+    public void exitEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
+        commentsExtractor.associateComments(ctx);
+        FileCreator.appendToVxlFile("\t\t\t</enum>\n");
     }
 
     /**

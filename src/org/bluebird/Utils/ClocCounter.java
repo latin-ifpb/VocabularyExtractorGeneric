@@ -11,6 +11,8 @@ public class ClocCounter {
      * @return Quantidade de linhas
      */
     public static int lineCount(ParserRuleContext ctx) {
-        return ctx.getStop().getLine() - ctx.getStart().getLine();
+        int locCount = (ctx.getStop().getLine() - ctx.getStart().getLine()) + 1;
+
+        return locCount;
     }
 }
