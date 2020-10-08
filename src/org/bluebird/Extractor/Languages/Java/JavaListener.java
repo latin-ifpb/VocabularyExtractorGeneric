@@ -117,6 +117,7 @@ public class JavaListener extends JavaParserBaseListener {
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         lineCount = ClocCounter.lineCount(ctx);
+        //String javaDoc = commentsExtractor.getJavaDoc(ctx);
         TerminalNode methodIdentifier = ctx.IDENTIFIER();
         String methodParamenters = this.tokens.getText(ctx.formalParameters());
         String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid());
@@ -206,9 +207,10 @@ public class JavaListener extends JavaParserBaseListener {
      */
     public void enterEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
         lineCount = ClocCounter.lineCount(ctx);
+        //String javaDoc = commentsExtractor.getJavaDoc(ctx);
         TerminalNode enumIdentifier = ctx.IDENTIFIER();
 
-        FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\" loc=\"" + lineCount +  "\">\n");
+    FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\" loc=\"" + lineCount + "\">\n");
         constEnum(ctx);
         this.modifiersClassOrInterface = "default";
     }
@@ -220,6 +222,11 @@ public class JavaListener extends JavaParserBaseListener {
 
         for (int i = 0; i < constantes.length; i++) {
             String temp = constantes[i].strip();
+
+            if (temp.contains("(")) {
+               temp = temp.replaceAll("\\(.*\\)", "");
+//               FileCreator.appendToVxlFile("\t\t\t<const name=\"" + temp + "\"></const>\n");
+            }
             FileCreator.appendToVxlFile("\t\t\t<const name=\"" + temp + "\"></const>\n");
         }
     }
