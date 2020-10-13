@@ -1,4 +1,3 @@
-//
 // Este comentário não faz parte da classe Generica
 package com.xml2xsd;
 
