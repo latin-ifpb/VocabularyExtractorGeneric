@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="codigoGenerico2.0" revision="codigoCódigoGenerico2.0Revision">
+<java-project>
+	<pack name="com/xml2xsd">
+	</pack>
+		<class name="com/xml2xsd/GenericClass.java" intfc="n" acess="public" loc="66">
+			<const name="PUBLIC_CONSTANTE" type="int" acess="public" loc="1" ></const>
+			<const name="PRIVATE_CONSTANTE" type="int" acess="private" loc="1" ></const>
+			<field name="public_atributo" type="float" acess="public" loc="1" ></field>
+			<field name="private_atributo" type="float" acess="private" loc="1" ></field>
+			<field name="listaDeStrings" type="List&lt;String&gt;" acess="default" loc="1" ></field>
+			<enum name="GenericEnum" acess="default" loc="7">
+			<const name="RED"></const>
+			<const name="GREEN"></const>
+			<const name="BLUE"></const>
+			<cmmt descr="// Olha ae um comentario de linha dentro do enum"></cmmt>
+			<cmmt descr="/* Um comentario de bloco dentro do enum */"></cmmt>
+			</enum>
+			<mth name="public_metodo(int parametro1, int parametro2)" type="float" acess="public" loc="6">
+			<lvar name="local_variavel " type="int"></lvar>
+			<cmmt descr="/* Constantes */"></cmmt>
+			<cmmt descr="/* Atributos */"></cmmt>
+			<cmmt descr="/* Comentário de public_atributo */"></cmmt>
+			<cmmt descr="/* Comentário de public_atributo */"></cmmt>
+			<cmmt descr="/* Com Generics */"></cmmt>
+			<cmmt descr="/* Métodos */"></cmmt>
+			<cmmt descr="/* Variavel local */"></cmmt>
+			<cmmt descr="// uma expressao generica"></cmmt>
+			</mth>
+			<mth name="private_metodo(String parametro1, boolean parametro2)" type="float" acess="private" loc="3">
+			</mth>
+		<class name="com/xml2xsd/Interna.java" intfc="n" acess="default" loc="13">
+			<field name="public_atributo_interna" type="float" acess="public" loc="1" ></field>
+			<field name="private_atributo__interna" type="float" acess="private" loc="1" ></field>
+			<constr name="Interna()" acess="public">
+			</constr>
+			<mth name="coisa()" type="void" acess="private" loc="3">
+			<cmmt descr="/* Comentário de public_atributo_interna */"></cmmt>
+			<cmmt descr="/* Comentário de public_atributo_interna */"></cmmt>
+			</mth>
+		</class>
+		<class name="com/xml2xsd/Funcionario.java" intfc="n" acess="default" loc="3">
+			<mth name="getBonificacao()" type="double" acess="public" loc="1">
+			</mth>
+		</class>
+		<class name="com/xml2xsd/Interna2.java" intfc="n" acess="default" loc="1">
+		</class>
+		<class name="com/xml2xsd/Interna3.java" intfc="n" acess="default" loc="1">
+		</class>
+			<cmmt descr="/* Metodo abstrato */"></cmmt>
+		</class>
+			<enum name="SideEnum" acess="default" loc="9">
+			<const name="ESSA"></const>
+			<const name="ENUMERACAO"></const>
+			<const name="NUM"></const>
+			<const name="FAZ"></const>
+			<const name="NADA"></const>
+			<mth name="foo(String str)" type="void" acess="public" loc="3">
+			<cmmt descr="// A agua viva ainda esta na fonte?"></cmmt>
+			<cmmt descr="//Comentario dentro da classe do Enum"></cmmt>
+			</mth>
+			</enum>
+			<enum name="SideEnum2" acess="default" loc="19">
+			<const name="NUM"></const>
+			<const name="FAZ"></const>
+			<const name="NADA"></const>
+			<field name="descricao" type="String" acess="private" loc="1" ></field>
+			<constr name="Turno(String descricao)" acess="default">
+			</constr>
+			<mth name="getDescricao()" type="String" acess="public" loc="3">
+			<cmmt descr="/*
+    Comentario de bloco dentro do enum
+    */"></cmmt>
+			</mth>
+			</enum>
+</java-project>
+</project>
