@@ -1,6 +1,8 @@
 package org.bluebird.Extractor.Languages.Java;
 
+import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.misc.Interval;
@@ -26,6 +28,7 @@ public class JavaListener extends JavaParserBaseListener {
     private CommentsExtractor commentsExtractor;
     private String pack;
     private int lineCount;
+    private String javaDoc;
 
     JavaListener(JavaParser parser, BufferedTokenStream tokenStream) {
         this.tokens = parser.getTokenStream();
@@ -40,6 +43,7 @@ public class JavaListener extends JavaParserBaseListener {
      */
     public void enterCompilationUnit(JavaParser.CompilationUnitContext ctx) {
         commentsExtractor.getAllComments(ctx, JavaLexer.COMMENTS_CHANNEL);
+        commentsExtractor.getJavaDoc(ctx);
         this.ruleIndex.push(1);
     }
 
@@ -92,9 +96,14 @@ public class JavaListener extends JavaParserBaseListener {
     @Override
     public void enterClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
         TerminalNode classIdentifier = ctx.IDENTIFIER();
+        lineCount = ClocCounter.lineCount(ctx);
+        javaDoc = commentsExtractor.associateJavaDoc(ctx.getStart().getLine());
         ruleIndex.push(ctx.getStart().getLine());
-        FileCreator.appendToVxlFile("\t\t<class name=\"" + pack + "/" + classIdentifier + ".java\"" + " intfc=\"n\" acess=\"" + this.modifiersClassOrInterface + "\">\n");
+        FileCreator.appendToVxlFile("\t\t<class name=\"" + pack + "/" + classIdentifier + ".java\"" + " intfc=\"n\" acess=\"" +
+                this.modifiersClassOrInterface + "\" loc=\"" + lineCount + "\">\n");
+        FileCreator.appendToVxlFile("\t\t\t <javaDoc cmmt=\"" + javaDoc + "\"></javaDoc>\n");
         this.modifiersClassOrInterface = "default";
+        javaDoc = "";
     }
 
     /**
@@ -117,7 +126,7 @@ public class JavaListener extends JavaParserBaseListener {
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         lineCount = ClocCounter.lineCount(ctx);
-        //String javaDoc = commentsExtractor.getJavaDoc(ctx);
+        javaDoc = commentsExtractor.associateJavaDoc(ctx.getStart().getLine());
         TerminalNode methodIdentifier = ctx.IDENTIFIER();
         String methodParamenters = this.tokens.getText(ctx.formalParameters());
         String typeMethod = this.tokens.getText(ctx.typeTypeOrVoid());
@@ -129,8 +138,10 @@ public class JavaListener extends JavaParserBaseListener {
 
         FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + methodParamenters + "\" type=\"" + typeMethod + "\" acess=\"" +
                 this.modifiers + "\" loc=\"" + lineCount + "\">\n");
+        FileCreator.appendToVxlFile("\t\t\t <javaDoc cmmt=\"" + javaDoc + "\"></javaDoc>\n");
 
         this.modifiers = "default";
+        javaDoc = "";
     }
 
     /**
@@ -182,12 +193,15 @@ public class JavaListener extends JavaParserBaseListener {
     public void enterConstructorDeclaration(JavaParser.ConstructorDeclarationContext ctx) {
         String constructorParameters = this.tokens.getText(ctx.formalParameters());
         TerminalNode constructorIdentifier = ctx.IDENTIFIER();
+        javaDoc = commentsExtractor.associateJavaDoc(ctx.getStart().getLine());
 
         constructorParameters = constructorParameters.replace("<", "&lt;");
         constructorParameters = constructorParameters.replace(">", "&gt;");
 
         FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + constructorParameters + "\" acess=\"" + this.modifiers + "\">\n");
+        FileCreator.appendToVxlFile("\t\t\t <javaDoc cmmt=\"" + javaDoc + "\"></javaDoc>\n");
         this.modifiers = "default";
+        javaDoc = "";
     }
 
     /**
@@ -207,11 +221,13 @@ public class JavaListener extends JavaParserBaseListener {
      */
     public void enterEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
         lineCount = ClocCounter.lineCount(ctx);
-        //String javaDoc = commentsExtractor.getJavaDoc(ctx);
+        javaDoc = commentsExtractor.associateJavaDoc(ctx.getStart().getLine());
         TerminalNode enumIdentifier = ctx.IDENTIFIER();
 
     FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\" acess=\"" + this.modifiersClassOrInterface + "\" loc=\"" + lineCount + "\">\n");
+    FileCreator.appendToVxlFile("\t\t\t <javaDoc cmmt=\"" + javaDoc + "\"></javaDoc>\n");
         constEnum(ctx);
+        javaDoc = "";
         this.modifiersClassOrInterface = "default";
     }
 
@@ -273,6 +289,7 @@ public class JavaListener extends JavaParserBaseListener {
             this.modifiersClassOrInterface = temp;
         }
     }
+
 
     /**
      * Extrai a variavel local do metodo
