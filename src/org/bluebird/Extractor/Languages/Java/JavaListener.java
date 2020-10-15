@@ -29,11 +29,14 @@ public class JavaListener extends JavaParserBaseListener {
     private String pack;
     private int lineCount;
     private String javaDoc;
+    private Stack<Integer> stackerClass;
+    private String checkInnerClass = "";
 
     JavaListener(JavaParser parser, BufferedTokenStream tokenStream) {
         this.tokens = parser.getTokenStream();
         this.ruleIndex = new Stack<>();
         this.commentsExtractor = new CommentsExtractor(tokenStream);
+        this.stackerClass = new Stack<>();
     }
 
     /**
@@ -95,12 +98,14 @@ public class JavaListener extends JavaParserBaseListener {
      */
     @Override
     public void enterClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
+        stackerClass.push(ctx.getStart().getLine());
         TerminalNode classIdentifier = ctx.IDENTIFIER();
         lineCount = ClocCounter.lineCount(ctx);
         javaDoc = commentsExtractor.associateJavaDoc(ctx.getStart().getLine());
         ruleIndex.push(ctx.getStart().getLine());
+        checkInnerClass = innerClass();
         FileCreator.appendToVxlFile("\t\t<class name=\"" + pack + "/" + classIdentifier + ".java\"" + " intfc=\"n\" acess=\"" +
-                this.modifiersClassOrInterface + "\" loc=\"" + lineCount + "\">\n");
+                this.modifiersClassOrInterface + "\" inn=\"" +  checkInnerClass + "\" loc=\"" + lineCount + "\">\n");
         FileCreator.appendToVxlFile("\t\t\t <javaDoc cmmt=\"" + javaDoc + "\"></javaDoc>\n");
         this.modifiersClassOrInterface = "default";
         javaDoc = "";
@@ -113,9 +118,17 @@ public class JavaListener extends JavaParserBaseListener {
      */
 
     public void exitClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
+        stackerClass.pop();
         commentsExtractor.associateComments(ctx);
         ruleIndex.pop();
         FileCreator.appendToVxlFile("\t\t</class>\n");
+    }
+
+    public String innerClass () {
+        if(stackerClass.size() > 1 ) {
+            return "s";
+        }
+        return "n";
     }
 
     /**
