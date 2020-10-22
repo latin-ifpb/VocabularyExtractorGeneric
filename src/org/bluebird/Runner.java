@@ -12,13 +12,7 @@ public class Runner {
      */
     public static void main(String[] args) {
         ExtractorInit extractorInit = new ExtractorInit();
-        // String languageOption = "", projectName = "", projectRevision = "", projectPath = "", filePath = "";
-
-        String languageOption = "Java";
-        String projectName = "EnumTest";
-        String projectRevision = "EnumTestRevision";
-        String projectPath = "c:/Users/carva/Downloads/teste2";
-        String filePath = "c:/Users/carva/Downloads/teste2";
+        String languageOption = "", projectName = "", projectRevision = "", projectPath = "", filePath = "";
 
         final String MANUAL = "You must set the following options:"
                 + "\n\t-lang: language of the project to be extracted"
@@ -33,10 +27,10 @@ public class Runner {
                 + "\n\n\tEXAMPLE: -lang Java,C,CSharp -n Project_name -r Project_Revision  -d ~/SomeProject/ -f ~/Downloads" +
                 "-cg -vxl -txt";
         try {
-//            if (args.length == 0) {
-//                System.out.println(MANUAL);
-//                System.exit(0);
-//            }
+            if (args.length == 0) {
+                System.out.println(MANUAL);
+                System.exit(0);
+            }
 
             for (int i = 0; i < args.length; i++) {
                 switch (args[i]) {
@@ -74,11 +68,6 @@ public class Runner {
                         break;
                 }
             }
-
-            ExtractorOptions.setVxlEnabled(true);
-            ExtractorOptions.setVocabularyTxtEnabled(true);
-            ExtractorOptions.setCallGraphEnabled(true);
-            ExtractorOptions.setMemoryRuntimeEnabled(true);
 
             extractorInit.extractVocabulary(languageOption.split(","), projectName, projectPath, filePath, projectRevision);
         } catch (IndexOutOfBoundsException e) {
