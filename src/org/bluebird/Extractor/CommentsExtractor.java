@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.bluebird.FileUtils.FileCreator;
 
-import java.io.File;
 import java.util.*;
 
 public class CommentsExtractor {
@@ -16,7 +15,7 @@ public class CommentsExtractor {
 
 
     /**
-     * Inicializa o hashmap que relaciona comentarios com linha do codigo
+         * Inicializa o hashmap que relaciona comentarios com linha do codigo
      *
      * @param commentsStream Token Stream do codigo fonte
      */
