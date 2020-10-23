@@ -97,15 +97,13 @@ public class JavaListener extends JavaParserBaseListener {
      */
     @Override
     public void enterClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
-        stackerClass.push(ctx.getStart().getLine());
         TerminalNode classIdentifier = ctx.IDENTIFIER();
-        lineCount = ClocCounter.lineCount(ctx);
         javaDoc = commentsExtractor.associateJavaDoc(ctx.getStart().getLine());
         ruleIndex.push(ctx.getStart().getLine());
         stackerClass.push(ctx.getStart().getLine());
         lineCount = ClocCounter.lineCount(ctx);
-        checkInnerClass = innerClass();
-        if (checkInnerClass == "y") {
+        String accessAndModifierClass = innerClass();
+        if (accessAndModifierClass == "y") {
             FileCreator.appendToVxlFile("\t\t<class name=\"" + pack + "/" + classIdentifier + ".java\"" + " intfc=\"n\" access=\"" + this.modifiers + "\" mod=\"" + this.modifiersAF + "\" inn=\"" + checkInnerClass + "\" loc=\"" + lineCount + "\">\n");
             addJavaDoc(javaDoc);
             this.modifiers = "default";
