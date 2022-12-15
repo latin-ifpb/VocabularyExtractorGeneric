@@ -399,7 +399,8 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStructOrUnionSpecifier(CParser.StructOrUnionSpecifierContext ctx) { }
+	@Override public void enterStructOrUnionSpecifier(CParser.StructOrUnionSpecifierContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -411,13 +412,15 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStructOrUnion(CParser.StructOrUnionContext ctx) { }
+	@Override public void enterStructOrUnion(CParser.StructOrUnionContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStructOrUnion(CParser.StructOrUnionContext ctx) { }
+	@Override public void exitStructOrUnion(CParser.StructOrUnionContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -435,13 +438,15 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStructDeclaration(CParser.StructDeclarationContext ctx) { }
+	@Override public void enterStructDeclaration(CParser.StructDeclarationContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStructDeclaration(CParser.StructDeclarationContext ctx) { }
+	@Override public void exitStructDeclaration(CParser.StructDeclarationContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -483,7 +488,8 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEnumSpecifier(CParser.EnumSpecifierContext ctx) { }
+	@Override public void enterEnumSpecifier(CParser.EnumSpecifierContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -495,7 +501,8 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEnumeratorList(CParser.EnumeratorListContext ctx) { }
+	@Override public void enterEnumeratorList(CParser.EnumeratorListContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -507,7 +514,8 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEnumerator(CParser.EnumeratorContext ctx) { }
+	@Override public void enterEnumerator(CParser.EnumeratorContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *

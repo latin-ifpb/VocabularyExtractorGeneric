@@ -1,6 +1,7 @@
 package org.bluebird.Extractor.Languages.C;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bluebird.Extractor.CallGraph;
@@ -11,6 +12,7 @@ import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtils.C.CBaseListener;
 import org.bluebird.LanguagesUtils.C.CParser;
 
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -215,10 +217,32 @@ public class CListener extends CBaseListener {
 
             if (ExtractorOptions.isVocabularyTxtEnabled()) {
                 FileCreator.appendToVocabularyTxtFile(structOrUnion + " " + structOrUnionIdentifier + "\n");
+
             }
 
             if (ExtractorOptions.isVxlEnabled()) {
+                String[] listaArgumentos;
+                String conc = " ";
                 FileCreator.appendToVxlFile("<" + structOrUnion + " name=\"" + structOrUnionIdentifier + "\" >\n");
+                String listaArgs = this.tokens.getText(ctx.structDeclarationList());
+                String replace = listaArgs.replaceAll(";\r\n", ",");
+                String replace2 = replace.replaceAll(";", "");
+                listaArgumentos = replace2.split(",");
+                for (String argumento: listaArgumentos) {
+                    argumento = argumento.trim();
+                    String[] args = argumento.split(" ");
+                    if (args.length == 2) {
+                        FileCreator.appendToVxlFile("\t\t\t<args name=\"" + args[1] + "\" type=\"" + args[0] + "\" ></args>\n");
+                    }
+                    else if (args.length == 3) {
+                        conc = args[0] + " " + args[1];
+                        FileCreator.appendToVxlFile("\t\t\t<args name=\"" + args[2] + "\" type=\"" + conc + "\" ></args>\n");
+                    }
+                    else if (args.length == 4){
+                        conc = args[0] + " " + args[1] + " " + args[2];
+                        FileCreator.appendToVxlFile("\t\t\t<args name=\"" + args[3] + "\" type=\"" + conc + "\" ></args>\n");
+                    }
+                }
             }
         }
     }
@@ -260,4 +284,31 @@ public class CListener extends CBaseListener {
         }
     }
 
+    @Override
+    public void enterEnumSpecifier(CParser.EnumSpecifierContext ctx) {
+        TerminalNode enumIdentifier = ctx.Identifier();
+        String[] listaArgumentos;
+        String listaArgs = this.tokens.getText(ctx.enumeratorList());
+        listaArgumentos = listaArgs.split(",");
+
+        if (ExtractorOptions.isVocabularyTxtEnabled()) {
+            FileCreator.appendToVocabularyTxtFile("enumerator " + enumIdentifier + "\n");
+        }
+
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<enum name=\"" + enumIdentifier + "\">\n");
+            for (String argumento: listaArgumentos) {
+                argumento = argumento.trim();
+                FileCreator.appendToVxlFile("\t\t\t<args name=\"" + argumento + "\"></args>\n");
+            }
+        }
+    }
+
+    @Override
+    public void exitEnumSpecifier(CParser.EnumSpecifierContext ctx) {
+        if(ExtractorOptions.isVxlEnabled()) {
+            commentsExtractor.associateComments(ctx);
+            FileCreator.appendToVxlFile("\t\t\t</enum>\n");
+        }
+    }
 }

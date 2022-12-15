@@ -1,16 +1,24 @@
 package org.bluebird.Extractor.Languages.CSharp;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bluebird.Extractor.CallGraph;
 import org.bluebird.Extractor.CommentsExtractor;
+import org.bluebird.Extractor.ReadFile;
+import org.bluebird.Extractor.Setup.ExtractorInit;
 import org.bluebird.Extractor.Setup.ExtractorOptions;
+import org.bluebird.FileUtils.FileBrowser;
 import org.bluebird.FileUtils.FileCreator;
 import org.bluebird.LanguagesUtils.CSharp.CSharpLexer;
 import org.bluebird.LanguagesUtils.CSharp.CSharpParser;
 import org.bluebird.LanguagesUtils.CSharp.CSharpParserBaseListener;
 import org.bluebird.Utils.ClocCounter;
 
+import javax.print.attribute.Attribute;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class CSharpListener extends CSharpParserBaseListener {
@@ -22,6 +30,15 @@ public class CSharpListener extends CSharpParserBaseListener {
     private CallGraph callGraph;
     private Stack<Integer> ruleIndex;
     private CommentsExtractor commentsExtractor;
+    private String type = "default";
+    private ArrayList<String> comentario;
+    private ExtractorInit extractorInit;
+    private int lineCompile;
+    private StringBuilder pathFile = new StringBuilder();
+    private ArrayList<String> listCabecalho = new ArrayList<>();
+    private String typeOfEntities = "default";
+    private String accessEntity = "default"; // acesso das entidades
+    private String modifiersEntity = "default"; // modificadores das entidades
 
     /**
      * Construtor do Listener da Linguagem C#
@@ -67,6 +84,12 @@ public class CSharpListener extends CSharpParserBaseListener {
         if (ExtractorOptions.isVxlEnabled()) {
             commentsExtractor.getAllComments(ctx, CSharpLexer.COMMENTS_CHANNEL);
             this.ruleIndex.push(1);
+            String dirPath = ExtractorInit.getNamePath();
+            String nameFile = dirPath + "/" + FileBrowser.getActualFile();
+            lineCompile = ctx.getStart().getLine();
+            ReadFile.lerArquivo(lineCompile, nameFile); //ATENÇÃO
+            listCabecalho = ReadFile.getListCabecalho();
+            addComentario(listCabecalho);
         }
     }
 
@@ -90,8 +113,8 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         String namespaceIdentifier = this.tokens.getText(ctx.qualified_identifier().getSourceInterval());
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocNamespace = ClocCounter.lineCount(ctx);
-
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("namespace " + namespaceIdentifier + "\n");
         }
@@ -110,7 +133,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitNamespace_declaration(CSharpParser.Namespace_declarationContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ctx);
+            //commentsExtractor.associateComments(ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             ruleIndex.pop();
             FileCreator.appendToVxlFile("\t</nmspc>\n");
         }
@@ -124,6 +149,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterClass_definition(CSharpParser.Class_definitionContext ctx) {
         String classIdentifier = this.tokens.getText(ctx.identifier());
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocClass = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
@@ -145,7 +171,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitClass_definition(CSharpParser.Class_definitionContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ctx);
+            //commentsExtractor.associateComments(ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             ruleIndex.pop();
             FileCreator.appendToVxlFile("\t\t</class>\n");
         }
@@ -159,6 +187,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         String methodIdentifier = this.tokens.getText(ctx.method_member_name().identifier(0));
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocMethod = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
@@ -178,8 +207,11 @@ public class CSharpListener extends CSharpParserBaseListener {
             }
 
             FileCreator.appendToVxlFile("\t\t\t<mth name=\"" + methodIdentifier + "(" + this.args + ")" + "\" acess=\"" +
-                    this.modifiers + "\" cloc=\"" + slocMethod +  "\">\n");
+                    this.modifiers + "\" cloc=\"" + slocMethod +  "\" type=\"" + this.typeOfEntities + "\">\n");
             this.modifiers = "default";
+            this.typeOfEntities = "default";
+            this.args.setLength(0);
+
         }
     }
 
@@ -191,7 +223,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitMethod_declaration(CSharpParser.Method_declarationContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ruleIndex.peek(), ctx);
+            //commentsExtractor.associateComments(ruleIndex.peek(), ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             this.funcaoAtual = null;
             FileCreator.appendToVxlFile("\t\t\t</mth>\n");
         }
@@ -205,7 +239,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterField_declaration(CSharpParser.Field_declarationContext ctx) {
         String fieldIdentifier = "";
-
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         for (CSharpParser.Variable_declaratorContext atributo : ctx.variable_declarators().variable_declarator()) {
             fieldIdentifier = this.tokens.getText(atributo.identifier().getSourceInterval());
         }
@@ -215,8 +249,9 @@ public class CSharpListener extends CSharpParserBaseListener {
         }
 
         if (ExtractorOptions.isVxlEnabled()) {
-            FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\" >\n");
+            FileCreator.appendToVxlFile("\t\t\t<field name=\"" + fieldIdentifier + "\" acess=\"" + this.modifiers + "\"  type=\"" + this.typeOfEntities + "\">\n");
             this.modifiers = "default";
+            this.typeOfEntities = "default";
         }
     }
 
@@ -228,7 +263,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitField_declaration(CSharpParser.Field_declarationContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ctx);
+            //commentsExtractor.associateComments(ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             FileCreator.appendToVxlFile("\t\t\t</field>\n");
         }
     }
@@ -241,6 +278,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         String constructorIdentifier = this.tokens.getText(ctx.identifier());
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocConstructor = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
@@ -257,6 +295,7 @@ public class CSharpListener extends CSharpParserBaseListener {
             FileCreator.appendToVxlFile("\t\t\t<constr name=\"" + constructorIdentifier + "(" + this.args + ")" +
                     "\" acess=\"" + this.modifiers + "\" cloc=\"" + slocConstructor + "\">\n");
             this.modifiers = "default";
+            this.args.setLength(0);
         }
     }
 
@@ -268,16 +307,13 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitConstructor_declaration(CSharpParser.Constructor_declarationContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
+            //commentsExtractor.associateComments(ctx);
             FileCreator.appendToVxlFile("\t\t\t</constr>\n");
         }
     }
 
-    /**
-     * Extrai os modificadores de atributos e metodos da classe
-     *
-     * @param ctx Entidade da Parser Tree
-     */
     @Override
     public void enterAll_member_modifiers(CSharpParser.All_member_modifiersContext ctx) {
         String temp;
@@ -289,6 +325,7 @@ public class CSharpListener extends CSharpParserBaseListener {
                 this.modifiers = temp;
             }
         }
+        this.typeOfEntities = "default";
     }
 
     /**
@@ -299,6 +336,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         String propertyIdentifier = this.tokens.getText(ctx.member_name().namespace_or_type_name().identifier(0));
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("property " + propertyIdentifier + "\n");
@@ -310,10 +348,12 @@ public class CSharpListener extends CSharpParserBaseListener {
         }
 
         if (ExtractorOptions.isVxlEnabled()) {
-            FileCreator.appendToVxlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\">\n");
+            FileCreator.appendToVxlFile("\t\t\t<prpty name=\"" + propertyIdentifier + "\" acess=\"" + this.modifiers + "\" type=\"" + this.typeOfEntities + "\">\n");
             this.modifiers = "default";
+            this.typeOfEntities = "default";
         }
     }
+
 
     /**
      * Associa comentarios aos propertys
@@ -323,7 +363,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitProperty_declaration(CSharpParser.Property_declarationContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ctx);
+            //commentsExtractor.associateComments(ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             this.funcaoAtual = null;
             FileCreator.appendToVxlFile("\t\t\t</prpty>\n");
         }
@@ -358,6 +400,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterLocal_variable_declaration(CSharpParser.Local_variable_declarationContext ctx) {
         String variableType = this.tokens.getText(ctx.local_variable_type());
+        String type = this.tokens.getText(ctx.local_variable_type());
         String variableIdentifier = this.tokens.getText(ctx.local_variable_declarator(0).identifier());
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
@@ -396,8 +439,8 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterStruct_definition(CSharpParser.Struct_definitionContext ctx) {
         String structIdentifier = this.tokens.getText(ctx.identifier());
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocStruct = ClocCounter.lineCount(ctx);
-
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
             FileCreator.appendToVocabularyTxtFile("struct " + structIdentifier + "\n");
         }
@@ -417,7 +460,9 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitStruct_definition(CSharpParser.Struct_definitionContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
-            commentsExtractor.associateComments(ctx);
+            //commentsExtractor.associateComments(ctx);
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             FileCreator.appendToVxlFile("\t\t\t</struct>\n");
         }
     }
@@ -430,6 +475,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         String enumIdentifier = this.tokens.getText(ctx.identifier()), enumVariable;
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocEnum = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
@@ -455,6 +501,8 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitEnum_definition(CSharpParser.Enum_definitionContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             FileCreator.appendToVxlFile("\t\t\t</enum>\n");
         }
     }
@@ -467,6 +515,7 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void enterInterface_definition(CSharpParser.Interface_definitionContext ctx) {
         String interfaceIdentifier = this.tokens.getText(ctx.identifier());
+        commentsExtractor.getCommentsEntidadeCSharp(ctx);
         int slocInterface = ClocCounter.lineCount(ctx);
 
         if (ExtractorOptions.isVocabularyTxtEnabled()) {
@@ -488,6 +537,8 @@ public class CSharpListener extends CSharpParserBaseListener {
     @Override
     public void exitInterface_definition(CSharpParser.Interface_definitionContext ctx) {
         if (ExtractorOptions.isVxlEnabled()) {
+            comentario = commentsExtractor.associarComentario(ctx.getStart().getLine(), ctx.getStop().getLine());
+            addComentario(comentario);
             FileCreator.appendToVxlFile("\t\t\t</intfc>\n");
         }
     }
@@ -517,4 +568,55 @@ public class CSharpListener extends CSharpParserBaseListener {
             }
         }
     }
+    @Override
+    public void enterConstant_declarator(CSharpParser.Constant_declaratorContext ctx) {
+        String constantes = this.tokens.getText(ctx.identifier());
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t<const name=\"" + constantes + "\" acess=\"" +
+                    this.modifiers + "\" type=\"" + this.typeOfEntities + "\">\n");
+            this.modifiers = "default";
+            this.typeOfEntities = "default";
+        }
+    }
+
+    @Override
+    public void exitConstant_declarator(CSharpParser.Constant_declaratorContext ctx) {
+        if (ExtractorOptions.isVxlEnabled()) {
+            FileCreator.appendToVxlFile("\t\t\t</const>\n");
+        }
+    }
+    @Override
+    public void enterAttribute(CSharpParser.AttributeContext ctx) {
+       String identifierAtribute = ctx.getStart().getText();
+        FileCreator.appendToVxlFile("\t\t\t<atrbt name=\"" + identifierAtribute + "\">\n");
+    }
+
+    @Override public void exitAttribute(CSharpParser.AttributeContext ctx) {
+        FileCreator.appendToVxlFile("\t\t\t</atrbt>\n");
+    }
+
+    @Override
+    public void enterAttribute_argument(CSharpParser.Attribute_argumentContext ctx) {
+        String attributeArgs = this.tokens.getText(ctx.expression());
+        attributeArgs = attributeArgs.replace("\"", "");
+        FileCreator.appendToVxlFile("\t\t\t\t<args descr=\"" + attributeArgs + "\"></args>\n");
+    }
+    @Override
+    public void enterIsType(CSharpParser.IsTypeContext ctx) {
+        CSharpParser.Base_typeContext  base_typeContext = ctx.base_type();
+    }
+
+    @Override
+    public void enterType(CSharpParser.TypeContext ctx) {
+        typeOfEntities = this.tokens.getText(ctx.base_type());
+    }
+
+    public void addComentario (ArrayList<String> listComentario) {
+        if (listComentario.size() !=0) {
+            for (String cmt: listComentario) {
+                FileCreator.appendToVxlFile("\t\t\t<cmmt descr=\"" + cmt + "\"></cmmt>\n");
+            }
+        }
+    }
+
 }

@@ -50,8 +50,11 @@ public class CSharpParserBaseListener implements CSharpParserListener {
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBase_type(CSharpParser.Base_typeContext ctx) { }
+     * @return
+     */
+	@Override public CSharpParser.Simple_typeContext enterBase_type(CSharpParser.Base_typeContext ctx) {
+        return null;
+    }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -159,7 +162,8 @@ public class CSharpParserBaseListener implements CSharpParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(CSharpParser.ExpressionContext ctx) { }
+	@Override public void enterExpression(CSharpParser.ExpressionContext ctx) {
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1108,7 +1112,7 @@ public class CSharpParserBaseListener implements CSharpParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterForStatement(CSharpParser.ForStatementContext ctx) { }
-	/**
+	/**Baldoino Sonildo da Nobrega -
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>

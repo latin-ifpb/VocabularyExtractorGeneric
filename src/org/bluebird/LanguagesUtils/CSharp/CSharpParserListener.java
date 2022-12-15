@@ -38,9 +38,10 @@ public interface CSharpParserListener extends ParseTreeListener {
 	void exitType(CSharpParser.TypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CSharpParser#base_type}.
-	 * @param ctx the parse tree
-	 */
-	void enterBase_type(CSharpParser.Base_typeContext ctx);
+     * @param ctx the parse tree
+     * @return
+     */
+	CSharpParser.Simple_typeContext enterBase_type(CSharpParser.Base_typeContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link CSharpParser#base_type}.
 	 * @param ctx the parse tree

@@ -11,7 +11,12 @@ import java.io.IOException;
 
 public class ExtractorInit {
 
+    public static String namePath = "";
     private MemoryRuntime memoryRuntime;
+
+    public static String getNamePath() {
+        return ExtractorInit.namePath;
+    }
 
     public ExtractorInit() {
     }
@@ -41,6 +46,8 @@ public class ExtractorInit {
      */
     public void extractVocabulary(String[] languageOption, String projectName, String dirPath, String fileToSavePath, String revision) {
         long start = System.currentTimeMillis(), elapsedTimeMillis, elapsedTimeSec;
+        namePath = dirPath;
+
 
         if (ExtractorOptions.isMemoryRuntimeEnabled()) {
             memoryRuntime = new MemoryRuntime();
